@@ -1,5 +1,16 @@
 #include <iostream>
+#include "../../core/core.h"
+#include "../../core/console/Console.h"
+
+void start() {
+}
+
+void update(double delta) {
+}
+
+void close() {
+}
 
 int main() {
-	std::cout << "Hello World" << std::endl;
+	Core::start(start, update, close);
 }
