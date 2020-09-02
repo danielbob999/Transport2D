@@ -4,6 +4,13 @@
 /* Static variables */
 Core* Core::s_instance = nullptr;
 
+/* Static functions */
+void Core::glfwErrorCallbackFn(int err, const char* msg) {
+    // Log the error and close the app
+    Console::logError("An GLFW error has occured (" + std::to_string(err) + "): " + std::string(msg));
+    getInstance()->m_shouldBeLooping = false;
+}
+
 /* Private functions */
 void Core::run() {
     /* Initialize the library */

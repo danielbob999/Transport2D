@@ -11,6 +11,7 @@ private:
 	const int VERSION_PATCH = 0;
 
 	static Core* s_instance;
+	static void glfwErrorCallbackFn(int, const char*);
 	
 	bool m_shouldBeLooping;
 	Console* m_console;
