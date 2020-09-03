@@ -148,6 +148,8 @@
     <ClCompile Include="src\core\Core.cpp" />
     <ClCompile Include="src\core\coresystem\CoreSystem.cpp" />
     <ClCompile Include="src\core\coresystem\example\ExampleSystem.cpp" />
+    <ClCompile Include="src\core\objectsystem\ComponentScript.cpp" />
+    <ClCompile Include="src\core\objectsystem\Object.cpp" />
     <ClCompile Include="src\game\main\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -155,6 +157,8 @@
     <ClInclude Include="src\core\Core.h" />
     <ClInclude Include="src\core\coresystem\CoreSystem.h" />
     <ClInclude Include="src\core\coresystem\example\ExampleSystem.h" />
+    <ClInclude Include="src\core\objectsystem\ComponentScript.h" />
+    <ClInclude Include="src\core\objectsystem\Object.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

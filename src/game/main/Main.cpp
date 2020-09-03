@@ -1,10 +1,11 @@
 #include <iostream>
 #include "../../core/core.h"
 #include "../../core/console/Console.h"
+#include "../../core/objectsystem/Object.h"
+using namespace core_objectsystem;
 
 
 void start() {
-	Console::logError("Henlo you stinker");
 }
 
 void update(double delta) {
