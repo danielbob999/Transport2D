@@ -3,16 +3,10 @@
 #include "../../core/core.h"
 #include "../../core/console/Console.h"
 
-void start() {
-
-}
-
-void update(double delta) {
-}
-
-void close() {
+void init() {
+	Console::log("Init function is fun");
 }
 
 int main() {
-	Core::start(start, update, close);
+	Core::start(init);
 }

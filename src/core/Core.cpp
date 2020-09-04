@@ -35,18 +35,19 @@ void Core::run() {
     // Loop through the core systems and call their start function
     callLoop(Core::CoreSystemLoopType::Start);
 
+    // Call the init function provided. This is where Objects/ComponentScripts should be created.
+    initFn();
+
     // Call the start function provided in main
-    startFn();
     callObjectLoop(0);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(m_window) && m_shouldBeLooping) {
         /* Run update functions here*/
         callLoop(Core::CoreSystemLoopType::Update);
-        callObjectLoop(1);
 
-        // Call the update function provided in main
-        updateFn(getRunTime());
+        // Call the update function of all components
+        callObjectLoop(1);
 
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
@@ -63,9 +64,8 @@ void Core::run() {
         m_runTime = glfwGetTime();
     }
 
-    // Call the close function provided in main
+    // Call the close function of all ComponentScripts
     // This must be done before all the important systems close down
-    closeFn();
     callObjectLoop(2);
 
     callLoop(Core::CoreSystemLoopType::Close);
@@ -125,14 +125,12 @@ double Core::getRunTime() {
     return m_runTime;
 }
 
-void Core::start(void (*sFn)(), void (*uFn)(double), void (*cFn)()) {
+void Core::start(void (*iFn)()) {
 	if (s_instance == nullptr) {
 		s_instance = new Core();
 	}
 
-    getInstance()->startFn = sFn;
-    getInstance()->updateFn = uFn;
-    getInstance()->closeFn = cFn;
+    getInstance()->initFn = iFn;
 
 	getInstance()->m_shouldBeLooping = true;
 

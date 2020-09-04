@@ -28,9 +28,7 @@ private:
 	};
 
 	// Funtion pointers
-	void (*startFn)();
-	void (*updateFn)(double);
-	void (*closeFn)();
+	void (*initFn)();
 
 	void run();
 	void callLoop(const Core::CoreSystemLoopType&);
@@ -41,7 +39,7 @@ public:
 
 	double getRunTime();
 
-	static void start(void (*sFn)(), void (*uFn)(double), void (*cFn)());
+	static void start(void (*sFn)());
 	static void stop();
 
 	static Core* getInstance();
