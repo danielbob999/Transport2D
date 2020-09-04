@@ -40,8 +40,10 @@ namespace core_objectsystem {
 
 		int getId();												// Gets the ID if this Object. The ID is used for Object comparison
 		bool equals(const Object*);									// Returns true if the ids are the same (they are the same Object), false otherwise
+		void runComponentFn(int);
 
 		static Object* createObject();									// Creates a new Object with the default values
 		static Object* createObject(const std::string&, int x, int y);	// Creates a new Object with the supplied values
+		static std::vector<Object*>& getObjects();
 	};
 }

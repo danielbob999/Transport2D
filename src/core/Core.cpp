@@ -1,5 +1,8 @@
 #include "Core.h"
 #include "coresystem/example/ExampleSystem.h"
+#include "objectsystem/ComponentScript.h"
+#include "objectsystem/Object.h"
+using namespace core_objectsystem;
 
 /* Static variables */
 Core* Core::s_instance = nullptr;
@@ -34,11 +37,13 @@ void Core::run() {
 
     // Call the start function provided in main
     startFn();
+    callObjectLoop(0);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(m_window) && m_shouldBeLooping) {
         /* Run update functions here*/
         callLoop(Core::CoreSystemLoopType::Update);
+        callObjectLoop(1);
 
         // Call the update function provided in main
         updateFn(getRunTime());
@@ -61,6 +66,7 @@ void Core::run() {
     // Call the close function provided in main
     // This must be done before all the important systems close down
     closeFn();
+    callObjectLoop(2);
 
     callLoop(Core::CoreSystemLoopType::Close);
 
@@ -90,6 +96,16 @@ void Core::callLoop(const Core::CoreSystemLoopType& id) {
                 break;
         }
 
+        it++;
+    }
+}
+
+void Core::callObjectLoop(int code) {
+    std::vector<Object*> objs = Object::getObjects();
+    std::vector<Object*>::iterator it = objs.begin();
+
+    while (it != objs.end()) {
+        (*it)->runComponentFn(code);
         it++;
     }
 }

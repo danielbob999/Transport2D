@@ -16,6 +16,39 @@ Object::Object() {
 	m_position = b2Vec2(0, 0);
 }
 
+ComponentScript* Object::addComponentScript(ComponentScript* script) {
+	ComponentScript* currentScriptOfType = getComponentScript(script->getTypeString());
+
+	if (currentScriptOfType == nullptr) {
+		m_components.push_back(script);
+		return script;
+	}
+
+	return currentScriptOfType;
+}
+
+ComponentScript* Object::getComponentScript(const std::string& typeString) {
+	std::vector<ComponentScript*>::iterator it = m_components.begin();
+
+	while (it != m_components.end()) {
+		if ((*it)->getTypeString() == typeString) {
+			return (*it);
+		}
+	}
+
+	return nullptr;
+}
+
+void Object::removeComponentScript(const std::string& typeString) {
+	std::vector<ComponentScript*>::iterator it = m_components.begin();
+
+	while (it != m_components.end()) {
+		if ((*it)->getTypeString() == typeString) {
+			m_components.erase(it);
+		}
+	}
+}
+
 Object* Object::createObject() {
 	return createObject("NULL", 0, 0);
 }
@@ -45,6 +78,32 @@ Object* Object::createObject(const std::string& name, int x, int y) {
 	s_objects.push_back(obj);
 
 	return obj;
+}
+
+void Object::runComponentFn(int code) {
+	std::vector<ComponentScript*>::iterator it = m_components.begin();
+
+	while (it != m_components.end()) {
+		switch (code) {
+			case 0:
+				(*it)->start();
+				break;
+			case 1:
+				(*it)->update();
+				break;
+			case 2:
+				(*it)->close();
+				break;
+			default:
+				break;
+		}
+
+		it++;
+	}
+}
+
+std::vector<Object*>& Object::getObjects() {
+	return s_objects;
 }
 
 b2Vec2& Object::getPosition() {

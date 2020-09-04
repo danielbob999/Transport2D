@@ -34,6 +34,7 @@ private:
 
 	void run();
 	void callLoop(const Core::CoreSystemLoopType&);
+	void callObjectLoop(int code);
 public:
 	Core();
 	~Core();
