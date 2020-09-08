@@ -24,5 +24,7 @@ public:
 	static void logError(const std::string&);
 	static void logError(const char*);
 
+	static std::string ptrToString(void*);
+
 	static Console* getInstance();
 };

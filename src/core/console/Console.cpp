@@ -39,6 +39,13 @@ void Console::logError(const char* charStr) {
 	logError(std::string(charStr));
 }
 
+std::string Console::ptrToString(void* ptr) {
+	std::stringstream ss;
+	ss << ptr;
+
+	return ss.str();
+}
+
 std::string Console::generateLogStr(const int& mode, const std::string& msg) {
 	std::stringstream ss;
 

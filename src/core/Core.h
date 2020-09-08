@@ -3,6 +3,9 @@
 #include "coresystem/CoreSystem.h"
 #include "console/Console.h"
 #include "../../includes/GLFW/glfw3.h"
+#include "input/InputSystem.h"
+#include "input/InputKeyDefs.h"
+using namespace core_input;
 
 class Core {
 private:
@@ -14,24 +17,16 @@ private:
 	static void glfwErrorCallbackFn(int, const char*);
 	
 	bool m_shouldBeLooping;
-	Console* m_console;
 	GLFWwindow* m_window;
-	std::vector<CoreSystem*> m_coreSystems;
 	double m_runTime;
 
-	enum CoreSystemLoopType {
-		None,
-		Start,
-		Update,
-		Render,
-		Close
-	};
+	Console* m_console;
+	InputSystem* m_inputSystem;
 
 	// Funtion pointers
 	void (*initFn)();
 
 	void run();
-	void callLoop(const Core::CoreSystemLoopType&);
 	void callObjectLoop(int code);
 public:
 	Core();

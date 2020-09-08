@@ -148,17 +148,22 @@
     <ClCompile Include="src\core\Core.cpp" />
     <ClCompile Include="src\core\coresystem\CoreSystem.cpp" />
     <ClCompile Include="src\core\coresystem\example\ExampleSystem.cpp" />
+    <ClCompile Include="src\core\input\InputSystem.cpp" />
     <ClCompile Include="src\core\objectsystem\ComponentScript.cpp" />
     <ClCompile Include="src\core\objectsystem\Object.cpp" />
     <ClCompile Include="src\game\main\Main.cpp" />
+    <ClCompile Include="src\game\main\TestCompScript.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\console\Console.h" />
     <ClInclude Include="src\core\Core.h" />
     <ClInclude Include="src\core\coresystem\CoreSystem.h" />
     <ClInclude Include="src\core\coresystem\example\ExampleSystem.h" />
+    <ClInclude Include="src\core\input\InputSystem.h" />
+    <ClInclude Include="src\core\input\InputKeyDefs.h" />
     <ClInclude Include="src\core\objectsystem\ComponentScript.h" />
     <ClInclude Include="src\core\objectsystem\Object.h" />
+    <ClInclude Include="src\game\main\TestCompScript.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

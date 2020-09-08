@@ -2,6 +2,8 @@
 #include "coresystem/example/ExampleSystem.h"
 #include "objectsystem/ComponentScript.h"
 #include "objectsystem/Object.h"
+#include "input/InputSystem.h"
+using namespace core_input;
 using namespace core_objectsystem;
 
 /* Static variables */
@@ -32,8 +34,14 @@ void Core::run() {
     /* Make the window's context current */
     glfwMakeContextCurrent(m_window);
 
-    // Loop through the core systems and call their start function
-    callLoop(Core::CoreSystemLoopType::Start);
+    glfwSetKeyCallback(m_window, InputSystem::inputCallbackFn);
+
+    /* 
+     ===================================
+      Call all the Core Systems start functions here 
+     ===================================
+    */
+    m_inputSystem->start();
 
     // Call the init function provided. This is where Objects/ComponentScripts should be created.
     initFn();
@@ -43,17 +51,25 @@ void Core::run() {
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(m_window) && m_shouldBeLooping) {
-        /* Run update functions here*/
-        callLoop(Core::CoreSystemLoopType::Update);
-
-        // Call the update function of all components
+        // Call the update function of all ComponentScripts connected to Objects
         callObjectLoop(1);
+
+        /*
+         ===================================
+          Call all the Core Systems update functions here
+         ===================================
+        */
+        m_inputSystem->update(glfwGetTime() - m_runTime); // This must come after every other update
 
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        /* Run render functions here */
-        callLoop(Core::CoreSystemLoopType::Render);
+        /*
+         ===================================
+          Call all the Core Systems render functions here
+         ===================================
+        */
+        m_inputSystem->render(glfwGetTime() - m_runTime);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(m_window);
@@ -68,36 +84,15 @@ void Core::run() {
     // This must be done before all the important systems close down
     callObjectLoop(2);
 
-    callLoop(Core::CoreSystemLoopType::Close);
+    /*
+     ===================================
+      Call all the Core Systems close functions here
+     ===================================
+    */
+    m_inputSystem->close();
 
     glfwTerminate();
 
-}
-
-void Core::callLoop(const Core::CoreSystemLoopType& id) {
-    std::vector<CoreSystem*>::iterator it = m_coreSystems.begin();
-
-    while (it != m_coreSystems.end()) {
-
-        switch (id) {
-            case Core::CoreSystemLoopType::Start:
-                (*it)->start();
-                break;
-            case Core::CoreSystemLoopType::Update:
-                (*it)->update(glfwGetTime() - m_runTime);
-                break;
-            case Core::CoreSystemLoopType::Render:
-                (*it)->render(glfwGetTime() - m_runTime);
-                break;
-            case Core::CoreSystemLoopType::Close:
-                (*it)->close();
-                break;
-            default:
-                break;
-        }
-
-        it++;
-    }
 }
 
 void Core::callObjectLoop(int code) {
@@ -130,12 +125,16 @@ void Core::start(void (*iFn)()) {
 		s_instance = new Core();
 	}
 
+    /*
+     ===================================
+      Initialise all the Core Systems here
+      ===================================
+    */
+    getInstance()->m_inputSystem = new InputSystem();
+
     getInstance()->initFn = iFn;
 
 	getInstance()->m_shouldBeLooping = true;
-
-    /* REGISTER CORE SYSTEMS HERE */
-    registerCoreSystem(new ExampleSystem(), 1);
 
 	getInstance()->run();
 }
@@ -153,12 +152,6 @@ void Core::getVersion(int* major, int* minor, int* patch) {
 
 Core* Core::getInstance() {
 	return s_instance;
-}
-
-void Core::registerCoreSystem(CoreSystem* system, int indx = 10) {
-    getInstance()->m_coreSystems.push_back(system);
-
-    Console::log("Registered new CoreSystem");
 }
 
 Core::~Core() {
