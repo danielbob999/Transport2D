@@ -97,7 +97,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATICGLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -151,6 +151,7 @@
     <ClCompile Include="src\core\input\InputSystem.cpp" />
     <ClCompile Include="src\core\objectsystem\ComponentScript.cpp" />
     <ClCompile Include="src\core\objectsystem\Object.cpp" />
+    <ClCompile Include="src\core\renderer\RenderSystem.cpp" />
     <ClCompile Include="src\game\main\Main.cpp" />
     <ClCompile Include="src\game\main\TestCompScript.cpp" />
   </ItemGroup>
@@ -163,6 +164,7 @@
     <ClInclude Include="src\core\input\InputKeyDefs.h" />
     <ClInclude Include="src\core\objectsystem\ComponentScript.h" />
     <ClInclude Include="src\core\objectsystem\Object.h" />
+    <ClInclude Include="src\core\renderer\RenderSystem.h" />
     <ClInclude Include="src\game\main\TestCompScript.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
