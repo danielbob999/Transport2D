@@ -2,7 +2,9 @@
 #include <string>
 #include "../coresystem/CoreSystem.h"
 #include "../../../includes/GLEW/glew.h"
-//#include "../../../includes/GLFW/glfw3.h"
+#include "../../../includes/GLFW/glfw3.h"
+#include "Camera.h"
+#include "Texture.h"
 
 namespace core_renderer {
 	class RenderSystem : public CoreSystem {
@@ -10,6 +12,8 @@ namespace core_renderer {
 		static RenderSystem* s_instance;
 
 		GLint m_shaderProgramId;
+		Camera* m_camera;
+		Texture m_defaultTexture;
 
 		GLint compileAndLinkShader(const char*, const char*);
 		std::string getShaderInfoMsg(const GLuint);
@@ -23,5 +27,6 @@ namespace core_renderer {
 		void close() override;
 
 		static RenderSystem* getInstance();
+		static Texture& getDefaultTexture();
 	};
 }

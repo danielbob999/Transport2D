@@ -151,11 +151,15 @@
     <ClCompile Include="src\core\input\InputSystem.cpp" />
     <ClCompile Include="src\core\objectsystem\ComponentScript.cpp" />
     <ClCompile Include="src\core\objectsystem\Object.cpp" />
+    <ClCompile Include="src\core\objectsystem\RenderComponent.cpp" />
+    <ClCompile Include="src\core\renderer\Camera.cpp" />
     <ClCompile Include="src\core\renderer\RenderSystem.cpp" />
+    <ClCompile Include="src\core\renderer\Texture.cpp" />
     <ClCompile Include="src\game\main\Main.cpp" />
     <ClCompile Include="src\game\main\TestCompScript.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\stb_image\stb_image.h" />
     <ClInclude Include="src\core\console\Console.h" />
     <ClInclude Include="src\core\Core.h" />
     <ClInclude Include="src\core\coresystem\CoreSystem.h" />
@@ -164,7 +168,10 @@
     <ClInclude Include="src\core\input\InputKeyDefs.h" />
     <ClInclude Include="src\core\objectsystem\ComponentScript.h" />
     <ClInclude Include="src\core\objectsystem\Object.h" />
+    <ClInclude Include="src\core\objectsystem\RenderComponent.h" />
+    <ClInclude Include="src\core\renderer\Camera.h" />
     <ClInclude Include="src\core\renderer\RenderSystem.h" />
+    <ClInclude Include="src\core\renderer\Texture.h" />
     <ClInclude Include="src\game\main\TestCompScript.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

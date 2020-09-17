@@ -5,13 +5,14 @@
 #include "TestCompScript.h"
 #include "../../core/objectsystem/ComponentScript.h"
 #include "../../core/objectsystem/Object.h"
+#include "../../core/objectsystem/RenderComponent.h"
 
 void init() {
 	Console::log("Init function is fun");
 
-	TestCompScript* tcs = new TestCompScript();
+	RenderComponent* rndcmp = new RenderComponent();
 	Object* obj = Object::createObject("StinkyObject", 0, 0);
-	obj->addComponentScript(tcs);
+	obj->addComponentScript(rndcmp);
 }
 
 int main() {

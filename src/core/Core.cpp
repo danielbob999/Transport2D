@@ -3,6 +3,8 @@
 #include "objectsystem/ComponentScript.h"
 #include "objectsystem/Object.h"
 #include "input/InputSystem.h"
+#include "renderer/RenderSystem.h"
+#include "renderer/Camera.h"
 using namespace core_input;
 using namespace core_objectsystem;
 
@@ -36,12 +38,15 @@ void Core::run() {
 
     glfwSetKeyCallback(m_window, InputSystem::inputCallbackFn);
 
+    glewInit();
+
     /* 
      ===================================
       Call all the Core Systems start functions here 
      ===================================
     */
     m_inputSystem->start();
+    m_renderSystem->start();
 
     // Call the init function provided. This is where Objects/ComponentScripts should be created.
     initFn();
@@ -59,10 +64,15 @@ void Core::run() {
           Call all the Core Systems update functions here
          ===================================
         */
+        m_renderSystem->update(glfwGetTime() - m_runTime);
         m_inputSystem->update(glfwGetTime() - m_runTime); // This must come after every other update
 
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
+
+        // Render background colour
+        float* backgroundColour = Camera::getInstance()->getBackgroundColour();
+        glColor3f(backgroundColour[0], backgroundColour[1], backgroundColour[2]);
 
         /*
          ===================================
@@ -70,6 +80,7 @@ void Core::run() {
          ===================================
         */
         m_inputSystem->render(glfwGetTime() - m_runTime);
+        m_renderSystem->render(glfwGetTime() - m_runTime);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(m_window);
@@ -90,6 +101,7 @@ void Core::run() {
      ===================================
     */
     m_inputSystem->close();
+    m_renderSystem->close();
 
     glfwTerminate();
 
@@ -131,7 +143,7 @@ void Core::start(void (*iFn)()) {
       ===================================
     */
     getInstance()->m_inputSystem = new InputSystem();
-
+    getInstance()->m_renderSystem = new RenderSystem();
     getInstance()->initFn = iFn;
 
 	getInstance()->m_shouldBeLooping = true;
@@ -152,6 +164,12 @@ void Core::getVersion(int* major, int* minor, int* patch) {
 
 Core* Core::getInstance() {
 	return s_instance;
+}
+
+GLFWwindow* Core::getWindow() {
+    if (getInstance() != nullptr) {
+        return getInstance()->m_window;
+    }
 }
 
 Core::~Core() {

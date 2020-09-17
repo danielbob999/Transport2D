@@ -2,10 +2,13 @@
 #include <vector>
 #include "coresystem/CoreSystem.h"
 #include "console/Console.h"
+#include "../../includes/GLEW/glew.h"
 #include "../../includes/GLFW/glfw3.h"
 #include "input/InputSystem.h"
 #include "input/InputKeyDefs.h"
+#include "renderer/RenderSystem.h"
 using namespace core_input;
+using namespace core_renderer;
 
 class Core {
 private:
@@ -22,6 +25,7 @@ private:
 
 	Console* m_console;
 	InputSystem* m_inputSystem;
+	RenderSystem* m_renderSystem;
 
 	// Funtion pointers
 	void (*initFn)();
@@ -38,6 +42,7 @@ public:
 	static void stop();
 
 	static Core* getInstance();
+	static GLFWwindow* getWindow();
 	static void getVersion(int*, int*, int*);
 	static void registerCoreSystem(CoreSystem*, int);
 };

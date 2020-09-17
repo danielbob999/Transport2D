@@ -4,6 +4,8 @@
 #include "../objectsystem/ComponentScript.h"
 #include "../objectsystem/Object.h"
 #include "../console/Console.h"
+#include "../Core.h"
+#include "../objectsystem/RenderComponent.h"
 
 using namespace core_renderer;
 using namespace core_objectsystem;
@@ -11,10 +13,21 @@ using namespace core_objectsystem;
 RenderSystem* RenderSystem::s_instance = nullptr;
 
 RenderSystem::RenderSystem() {
+	if (s_instance != nullptr) {
+		delete s_instance;
+	}
 
+	s_instance = this;
+
+	Console::log("RenderSystem (" + Console::ptrToString(s_instance) + ") has been initialised");
 }
 
 void RenderSystem::start() {
+	// Create a Camera
+	int width, height;
+	glfwGetWindowSize(Core::getWindow(), &width, &height);
+	m_camera = new Camera(width, height);
+
 	std::fstream fileStream;
 	// Open the filestream and get the vertex source code from the file
 	fileStream.open("res/shaders/vertex_shader.vs");
@@ -46,6 +59,10 @@ void RenderSystem::start() {
 	fileStream.close();
 
 	m_shaderProgramId = compileAndLinkShader(vSource.c_str(), fSource.c_str());
+
+	m_defaultTexture = Texture("res/textures/engine/default_texture.png");
+
+	Console::log("RenderSystem (" + Console::ptrToString(this) + ") has successfully started");
 }
 
 void RenderSystem::update(double delta) {
@@ -54,10 +71,20 @@ void RenderSystem::update(double delta) {
 
 void RenderSystem::render(double delta) {
 	std::vector<Object*> objs = Object::getObjects();
+	
+	glEnable(GL_TEXTURE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+	glEnableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_INDEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 	for (int i = 0; i < objs.size(); i++) {
 		if (i > 0) break;
 
+		RenderComponent* renderComp = (RenderComponent*)objs[i]->getComponentScript("RenderComponent");
 
 	}
 }
@@ -108,8 +135,8 @@ GLint RenderSystem::compileAndLinkShader(const char* vertSource, const char* fra
 		char message[1024];
 		glGetProgramInfoLog(shaderProgram, length, &length, message);
 
-		Console::log("Failed to link/validate shader program");
-		Console::log("Error " + std::string(message));
+		Console::logError("Failed to link/validate shader program");
+		Console::logError("Error " + std::string(message));
 
 		glDeleteProgram(shaderProgram);
 		return 0;
@@ -132,7 +159,7 @@ std::string RenderSystem::getShaderInfoMsg(const GLuint shaderId) {
 	if (result == GL_FALSE) {
 		int length;
 		glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &length);
-		char message[1024] = "h";
+		char message[1024] = "";
 		glGetShaderInfoLog(shaderId, length, &length, message);
 		returnStr = std::string(message);
 	} else {
@@ -144,6 +171,10 @@ std::string RenderSystem::getShaderInfoMsg(const GLuint shaderId) {
 
 RenderSystem* RenderSystem::getInstance() {
 	return s_instance;
+}
+
+Texture& RenderSystem::getDefaultTexture() {
+	return getInstance()->m_defaultTexture;
 }
 
 RenderSystem::~RenderSystem() {
