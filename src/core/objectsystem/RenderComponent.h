@@ -24,9 +24,16 @@ namespace core_objectsystem {
 		// Component functions
 		bool getShouldRender();
 		void setShouldRender(bool);
+
 		float* getColour();
 		void setColour(float, float, float);
+
 		Texture& getTexture();
 		void setTexture(Texture&);
+
+		b2Vec2& getSize();
+		void setSize(float, float);
+
+		b2Vec2 getVertexWorldPosition(int);
 	};
 }

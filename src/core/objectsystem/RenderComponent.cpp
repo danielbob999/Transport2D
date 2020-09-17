@@ -1,6 +1,8 @@
 #include "RenderComponent.h"
 #include "../renderer/RenderSystem.h"
 #include "../../../includes/box2d/box2d.h"
+#include "ComponentScript.h"
+#include <cmath>
 using namespace core_objectsystem;
 
 RenderComponent::RenderComponent() {
@@ -48,6 +50,74 @@ Texture& RenderComponent::getTexture() {
 
 void RenderComponent::setTexture(Texture& tex) {
 	m_texture = tex;
+}
+
+b2Vec2& RenderComponent::getSize() {
+	return m_size;
+}
+
+void RenderComponent::setSize(float x, float y) {
+	m_size = b2Vec2(x, y);
+}
+
+b2Vec2 RenderComponent::getVertexWorldPosition(int vertId) {
+    if (vertId < 1 || vertId > 4) {
+        return b2Vec2(0, 0);
+    }
+
+    b2Vec2 parentPos = getParent()->getPosition();
+    float rotation = getParent()->getRotation();
+
+    float bounds[4] = {
+        ((parentPos.x) - (m_size.x / 2.0f)),
+        ((parentPos.y) - (m_size.y / 2.0f)),
+        m_size.x,
+        m_size.y
+    };
+
+    if (vertId == 1) {
+        b2Vec2 vertPos = b2Vec2(bounds[1] + bounds[2], bounds[1]);
+
+        float x = parentPos.x + (vertPos.x - parentPos.x) * (float)cos(rotation) + (vertPos.y - parentPos.y) * (float)sin(rotation);
+        float y = parentPos.y - (vertPos.x - parentPos.x) * (float)sin(rotation) + (vertPos.y - parentPos.y) * (float)cos(rotation);
+
+        return b2Vec2(x, y);
+    }
+
+    if (vertId == 2) {
+        b2Vec2 vertPos = b2Vec2(bounds[0] + bounds[2], bounds[1] - bounds[3]);
+
+        float x = parentPos.x + (vertPos.x - parentPos.x) * (float)cos(rotation) + (vertPos.y - parentPos.y) * (float)sin(rotation);
+        float y = parentPos.y - (vertPos.x - parentPos.x) * (float)sin(rotation) + (vertPos.y - parentPos.y) * (float)cos(rotation);
+
+        return b2Vec2(x, y);
+    }
+
+    if (vertId == 3) {
+        b2Vec2 vertPos = b2Vec2(bounds[0], bounds[1] - bounds[3]);
+
+        float x = parentPos.x + (vertPos.x - parentPos.x) * (float)cos(rotation) + (vertPos.y - parentPos.y) * (float)sin(rotation);
+        float y = parentPos.y - (vertPos.x - parentPos.x) * (float)sin(rotation) + (vertPos.y - parentPos.y) * (float)cos(rotation);
+
+        return b2Vec2(x, y);
+    }
+
+    if (vertId == 4) {
+        b2Vec2 vertPos = b2Vec2(bounds[0], bounds[1]);
+
+        float x = parentPos.x + (vertPos.x - parentPos.x)
+            * (float)cos(rotation) + (vertPos.y - parentPos.y)
+            * (float)sin(rotation);
+
+        float y = parentPos.y - (vertPos.x - parentPos.x)
+            * (float)sin(rotation) + (vertPos.y - parentPos.y)
+            * (float)cos(rotation);
+
+        return b2Vec2(x, y);
+    }
+
+    return b2Vec2(-1, -1);
+}
 }
 
 std::string RenderComponent::getTypeString() {
