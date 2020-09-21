@@ -30,7 +30,7 @@ Texture::Texture(const char* path) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, m_data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_BGRA, GL_UNSIGNED_BYTE, m_data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 		Console::log("Generated new Texture. id=" + std::to_string(m_id));
@@ -57,6 +57,10 @@ bool Texture::isValid() {
 	return false;
 }
 
+int Texture::getId() {
+	return m_id;
+}
+
 Texture::~Texture() {
-	stbi_image_free(m_data);
+	//stbi_image_free(m_data);
 }

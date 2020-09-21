@@ -13,6 +13,7 @@ namespace core_renderer {
 		Texture(const char*);
 		~Texture();
 
+		int getId();
 		unsigned char* getData();
 		int getWidth();
 		int getHeight();
