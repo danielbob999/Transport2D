@@ -36,6 +36,8 @@ ComponentScript* Object::getComponentScript(const std::string& typeString) {
 		if ((*it)->getTypeString() == typeString) {
 			return (*it);
 		}
+
+		it++;
 	}
 
 	return nullptr;
@@ -48,6 +50,8 @@ void Object::removeComponentScript(const std::string& typeString) {
 		if ((*it)->getTypeString() == typeString) {
 			m_components.erase(it);
 		}
+
+		it++;
 	}
 }
 
