@@ -18,6 +18,10 @@ void Core::glfwErrorCallbackFn(int err, const char* msg) {
     getInstance()->m_shouldBeLooping = false;
 }
 
+void Core::glfwWindowResizeCallbackFn(GLFWwindow* window, int width, int height) {
+    Camera::getInstance()->setScreenSize(width, height);
+}
+
 /* Private functions */
 void Core::run() {
     /* Initialize the library */
@@ -25,8 +29,14 @@ void Core::run() {
         return;
     }
 
+    // Specify glfw window hints
+    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
+    glfwWindowHint(GLFW_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_VERSION_MINOR, 3);
+
     /* Create a windowed mode window and its OpenGL context */
-    m_window = glfwCreateWindow(912, 513, "Transport2D", NULL, NULL);
+    m_window = glfwCreateWindow(1152, 648, "Transport2D", NULL, NULL);
 
     if (!m_window) {
         glfwTerminate();
@@ -37,6 +47,7 @@ void Core::run() {
     glfwMakeContextCurrent(m_window);
 
     glfwSetKeyCallback(m_window, InputSystem::inputCallbackFn);
+    glfwSetWindowSizeCallback(m_window, glfwWindowResizeCallbackFn);
 
     glewInit();
 

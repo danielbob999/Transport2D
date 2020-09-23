@@ -75,6 +75,13 @@ b2Vec2& Camera::getScreenSize() {
 	return m_screenSize;
 }
 
+void Camera::setScreenSize(int w, int h) {
+	m_screenSize.x = w;
+	m_screenSize.y = h;
+
+	Console::log("Resized window");
+}
+
 Camera* Camera::getInstance() {
 	return s_instance;
 }

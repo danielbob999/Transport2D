@@ -28,6 +28,7 @@ namespace core_renderer {
 		float* getBackgroundColour();
 		void setBackgroundColour(float r, float g, float b);
 		b2Vec2& getScreenSize();
+		void setScreenSize(int, int);
 
 		static Camera* getInstance();
 	};

@@ -17,6 +17,7 @@ private:
 
 	static Core* s_instance;
 	static void glfwErrorCallbackFn(int, const char*);
+	static void glfwWindowResizeCallbackFn(GLFWwindow*, int, int);
 	
 	bool m_shouldBeLooping;
 	GLFWwindow* m_window;
