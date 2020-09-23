@@ -1,9 +1,8 @@
 #pragma once
 #include <vector>
+#include "renderer/GLIncludes.h"
 #include "coresystem/CoreSystem.h"
 #include "console/Console.h"
-#include "../../includes/GLEW/glew.h"
-#include "../../includes/GLFW/glfw3.h"
 #include "input/InputSystem.h"
 #include "input/InputKeyDefs.h"
 #include "renderer/RenderSystem.h"
@@ -46,5 +45,4 @@ public:
 	static Core* getInstance();
 	static GLFWwindow* getWindow();
 	static void getVersion(int*, int*, int*);
-	static void registerCoreSystem(CoreSystem*, int);
 };
