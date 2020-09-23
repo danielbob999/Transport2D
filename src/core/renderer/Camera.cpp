@@ -48,8 +48,6 @@ void Camera::setDefaultDisplayAreaWidth(float width) {
 	// Find the screen ratio
 	float screenRatio = (float)m_screenSize.y / (float)m_screenSize.x;
 
-	Console::log("RATIO: " + std::to_string(screenRatio));
-
 	// Set the display height amount to be the same ratio as the display width
 	//	- This stops the rendering becoming distorted
 	m_defaultDisplayAreaHeight = width * screenRatio;
