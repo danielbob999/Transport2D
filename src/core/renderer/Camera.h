@@ -11,6 +11,7 @@ namespace core_renderer {
 		b2Vec2 m_screenSize;
 		float m_zoomFactor;
 		float m_defaultDisplayAreaWidth;
+		float m_defaultDisplayAreaHeight;
 		float m_backgroundColour[3];
 
 	public:
@@ -23,6 +24,7 @@ namespace core_renderer {
 		void setZoomFactor(float);
 		float getDefaultDisplayAreaWidth();
 		void setDefaultDisplayAreaWidth(float);
+		float getDefaultDisplayAreaHeight();
 		float* getBackgroundColour();
 		void setBackgroundColour(float r, float g, float b);
 		b2Vec2& getScreenSize();

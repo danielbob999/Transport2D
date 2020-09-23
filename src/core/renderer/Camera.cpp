@@ -13,14 +13,16 @@ Camera::Camera(int sizeX, int sizeY) {
 
 	m_position = b2Vec2(0, 0);
 	m_zoomFactor = 1.0f;
-	m_defaultDisplayAreaWidth = 10.0f;
+
 	m_screenSize = b2Vec2(sizeX, sizeY);
 
-	m_backgroundColour[0] = 1.0f;
-	m_backgroundColour[1] = 0.0f;
-	m_backgroundColour[2] = 0.0f;
+	setDefaultDisplayAreaWidth(10);
 
-	Console::log("Created a new Camera");
+	m_backgroundColour[0] = 0.8f;
+	m_backgroundColour[1] = 0.8f;
+	m_backgroundColour[2] = 0.8f;
+
+	Console::log("Created a new Camera. ScreenWidth=" + std::to_string(sizeX) + ", ScreenHeight=" + std::to_string(sizeY));
 }
 
 b2Vec2& Camera::getPosition() {
@@ -42,10 +44,23 @@ void Camera::setZoomFactor(float zoomFact) {
 
 void Camera::setDefaultDisplayAreaWidth(float width) {
 	m_defaultDisplayAreaWidth = width;
+
+	// Find the screen ratio
+	float screenRatio = (float)m_screenSize.y / (float)m_screenSize.x;
+
+	Console::log("RATIO: " + std::to_string(screenRatio));
+
+	// Set the display height amount to be the same ratio as the display width
+	//	- This stops the rendering becoming distorted
+	m_defaultDisplayAreaHeight = width * screenRatio;
 }
 
 float Camera::getDefaultDisplayAreaWidth() {
 	return m_defaultDisplayAreaWidth;
+}
+
+float Camera::getDefaultDisplayAreaHeight() {
+	return m_defaultDisplayAreaHeight;
 }
 
 float* Camera::getBackgroundColour() {
