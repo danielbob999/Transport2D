@@ -16,8 +16,6 @@ Camera::Camera(int sizeX, int sizeY) {
 
 	m_screenSize = b2Vec2(sizeX, sizeY);
 
-	setDefaultDisplayAreaWidth(10);
-
 	m_backgroundColour[0] = 0.8f;
 	m_backgroundColour[1] = 0.8f;
 	m_backgroundColour[2] = 0.8f;
@@ -29,9 +27,8 @@ b2Vec2& Camera::getPosition() {
 	return m_position;
 }
 
-void Camera::setPosition(int x, int y) {
-	m_position.x = x;
-	m_position.y = y;
+void Camera::setPosition(float x, float y) {
+	m_position = b2Vec2(x, y);
 }
 
 float Camera::getZoomFactor() {
@@ -40,25 +37,6 @@ float Camera::getZoomFactor() {
 
 void Camera::setZoomFactor(float zoomFact) {
 	m_zoomFactor = zoomFact;
-}
-
-void Camera::setDefaultDisplayAreaWidth(float width) {
-	m_defaultDisplayAreaWidth = width;
-
-	// Find the screen ratio
-	float screenRatio = (float)m_screenSize.y / (float)m_screenSize.x;
-
-	// Set the display height amount to be the same ratio as the display width
-	//	- This stops the rendering becoming distorted
-	m_defaultDisplayAreaHeight = width * screenRatio;
-}
-
-float Camera::getDefaultDisplayAreaWidth() {
-	return m_defaultDisplayAreaWidth;
-}
-
-float Camera::getDefaultDisplayAreaHeight() {
-	return m_defaultDisplayAreaHeight;
 }
 
 float* Camera::getBackgroundColour() {

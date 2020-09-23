@@ -27,6 +27,7 @@ void RenderSystem::start() {
 	int width, height;
 	glfwGetWindowSize(Core::getWindow(), &width, &height);
 	m_camera = new Camera(width, height);
+	m_camera->setZoomFactor(15);
 
 	std::fstream fileStream;
 	// Open the filestream and get the vertex source code from the file
@@ -81,14 +82,9 @@ void RenderSystem::render(double delta) {
 	glEnableClientState(GL_INDEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	float* vertexData = nullptr;
-	int* indiceData = nullptr;
 	int itemsRendered = 0;
 
 	for (int i = 0; i < objs.size(); i++) {
-		if (i > 0) break;
-
-		
 		RenderComponent* renderComp = (RenderComponent*)objs[i]->getComponentScript("RenderComponent");
 
 		if (renderComp == nullptr) {
@@ -112,7 +108,7 @@ void RenderSystem::render(double delta) {
 			*/
 
 			
-			vertexData = new float[32]{
+			float vertexData[32] = {
 				worldToScreenCoords(renderComp->getVertexWorldPosition(1)).x,   worldToScreenCoords(renderComp->getVertexWorldPosition(1)).y,   1.0f,    renderColour[0],    renderColour[1],    renderColour[2],    1.0f, 0.0f,
 				worldToScreenCoords(renderComp->getVertexWorldPosition(2)).x,   worldToScreenCoords(renderComp->getVertexWorldPosition(2)).y,   1.0f,    renderColour[0],    renderColour[1],    renderColour[2],    1.0f, 1.0f,
 				worldToScreenCoords(renderComp->getVertexWorldPosition(3)).x,   worldToScreenCoords(renderComp->getVertexWorldPosition(3)).y,   1.0f,    renderColour[0],    renderColour[1],    renderColour[2],    0.0f, 1.0f,
@@ -120,7 +116,7 @@ void RenderSystem::render(double delta) {
 			};
 			
 
-			indiceData = new int[6]{
+			int indiceData[6] = {
 				0, 1, 3,
 				1, 2, 3
 			};
@@ -169,8 +165,8 @@ void RenderSystem::render(double delta) {
 			glDeleteBuffers(1, &vbo);
 			glDeleteVertexArrays(1, &vao);
 
-			delete[] vertexData;
-			delete[] indiceData;
+			//delete[] vertexData;
+			//delete[] indiceData;
 			
 			itemsRendered++;
 		}
@@ -267,8 +263,8 @@ b2Vec2 RenderSystem::worldToScreenCoords(b2Vec2 worldPos) {
 	b2Vec2 screenCoords = b2Vec2(0, 0);
 	b2Vec2 cameraPos = Camera::getInstance()->getPosition();
 
-	screenCoords.x = ((worldPos.x - cameraPos.x) / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0f));
-	screenCoords.y = ((worldPos.y + cameraPos.y) / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0f));
+	screenCoords.x = ((worldPos.x - cameraPos.x) / (Camera::getInstance()->getScreenSize().x / 2)) * Camera::getInstance()->getZoomFactor();
+	screenCoords.y = ((worldPos.y - cameraPos.y) / (Camera::getInstance()->getScreenSize().y / 2)) * Camera::getInstance()->getZoomFactor();
 
 	return screenCoords;
 }

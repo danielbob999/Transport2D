@@ -13,7 +13,7 @@ RenderComponent::RenderComponent() {
 
 	m_texture = RenderSystem::getDefaultTexture();
 	m_shouldRender = true;
-	m_size = b2Vec2(2, 2);
+	m_size = b2Vec2(1, 1);
 }
 
 void RenderComponent::start() {
@@ -68,10 +68,21 @@ b2Vec2 RenderComponent::getVertexWorldPosition(int vertId) {
 
     b2Vec2 parentPos = Object::getObjectById(getParentId())->getPosition();
     float rotation = Object::getObjectById(getParentId())->getRotation();
+    b2Vec2 cameraPos = Camera::getInstance()->getPosition();
 
+    /*
     float bounds[4] = {
         ((parentPos.x) - (m_size.x / 2.0f)), // x      = 0
         ((parentPos.y) - (m_size.y / 2.0f)), // y      = 1
+        m_size.x,                            // width  = 2
+        m_size.y                             // height = 3
+    };
+    */
+
+    
+    float bounds[4] = {
+        ((parentPos.x) - (m_size.x / 2.0f)), // x      = 0
+        ((parentPos.y) + (m_size.y / 2.0f)), // y      = 1
         m_size.x,                            // width  = 2
         m_size.y                             // height = 3
     };
@@ -82,7 +93,8 @@ b2Vec2 RenderComponent::getVertexWorldPosition(int vertId) {
         float x = parentPos.x + (vertPos.x - parentPos.x) * (float)cos(rotation) + (vertPos.y - parentPos.y) * (float)sin(rotation);
         float y = parentPos.y - (vertPos.x - parentPos.x) * (float)sin(rotation) + (vertPos.y - parentPos.y) * (float)cos(rotation);
 
-        return b2Vec2(x / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0), y / (Camera::getInstance()->getDefaultDisplayAreaHeight() / 2.0));
+        //return b2Vec2(x / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0), y / (Camera::getInstance()->getDefaultDisplayAreaHeight() / 2.0));
+        return b2Vec2(x, y);
     }
 
     if (vertId == 2) {
@@ -91,7 +103,8 @@ b2Vec2 RenderComponent::getVertexWorldPosition(int vertId) {
         float x = parentPos.x + (vertPos.x - parentPos.x) * (float)cos(rotation) + (vertPos.y - parentPos.y) * (float)sin(rotation);
         float y = parentPos.y - (vertPos.x - parentPos.x) * (float)sin(rotation) + (vertPos.y - parentPos.y) * (float)cos(rotation);
 
-        return b2Vec2(x / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0), y / (Camera::getInstance()->getDefaultDisplayAreaHeight() / 2.0));
+        //return b2Vec2(x / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0), y / (Camera::getInstance()->getDefaultDisplayAreaHeight() / 2.0));
+        return b2Vec2(x, y);
     }
 
     if (vertId == 3) {
@@ -100,7 +113,8 @@ b2Vec2 RenderComponent::getVertexWorldPosition(int vertId) {
         float x = parentPos.x + (vertPos.x - parentPos.x) * (float)cos(rotation) + (vertPos.y - parentPos.y) * (float)sin(rotation);
         float y = parentPos.y - (vertPos.x - parentPos.x) * (float)sin(rotation) + (vertPos.y - parentPos.y) * (float)cos(rotation);
 
-        return b2Vec2(x / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0), y / (Camera::getInstance()->getDefaultDisplayAreaHeight() / 2.0));
+        //return b2Vec2(x / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0), y / (Camera::getInstance()->getDefaultDisplayAreaHeight() / 2.0));
+        return b2Vec2(x, y);
     }
 
     if (vertId == 4) {
@@ -114,7 +128,8 @@ b2Vec2 RenderComponent::getVertexWorldPosition(int vertId) {
             * (float)sin(rotation) + (vertPos.y - parentPos.y)
             * (float)cos(rotation);
 
-        return b2Vec2(x / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0), y / (Camera::getInstance()->getDefaultDisplayAreaHeight() / 2.0));
+        //return b2Vec2(x / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0), y / (Camera::getInstance()->getDefaultDisplayAreaHeight() / 2.0));
+        return b2Vec2(x, y);
     }
 
     return b2Vec2(-1, -1);
