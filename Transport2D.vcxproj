@@ -170,6 +170,7 @@
     <ClInclude Include="src\core\objectsystem\Object.h" />
     <ClInclude Include="src\core\objectsystem\RenderComponent.h" />
     <ClInclude Include="src\core\renderer\Camera.h" />
+    <ClInclude Include="src\core\renderer\GLIncludes.h" />
     <ClInclude Include="src\core\renderer\RenderSystem.h" />
     <ClInclude Include="src\core\renderer\Texture.h" />
     <ClInclude Include="src\game\main\TestCompScript.h" />

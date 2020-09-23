@@ -11,7 +11,13 @@ void init() {
 	Console::log("Init function is fun");
 
 	RenderComponent* rndcmp = new RenderComponent();
+	rndcmp->setShouldRender(true);
+	rndcmp->setColour(1, 0, 0);
+	rndcmp->setSize(5, 5);
 	Object* obj = Object::createObject("StinkyObject", 0, 0);
+
+	TestCompScript* ts = new TestCompScript();
+	obj->addComponentScript(ts);
 	obj->addComponentScript(rndcmp);
 }
 

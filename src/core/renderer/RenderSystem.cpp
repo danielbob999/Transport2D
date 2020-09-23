@@ -81,12 +81,102 @@ void RenderSystem::render(double delta) {
 	glEnableClientState(GL_INDEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
+	float* vertexData = nullptr;
+	int* indiceData = nullptr;
+	int itemsRendered = 0;
+
 	for (int i = 0; i < objs.size(); i++) {
 		if (i > 0) break;
 
+		
 		RenderComponent* renderComp = (RenderComponent*)objs[i]->getComponentScript("RenderComponent");
 
+		if (renderComp == nullptr) {
+			continue;
+		}
+
+		if (renderComp->getShouldRender()) {
+			b2Vec2 objPos = objs[i]->getPosition();
+			b2Vec2 cameraPos = Camera::getInstance()->getPosition();
+			b2Vec2 renderSize = renderComp->getSize();
+
+			float* renderColour = renderComp->getColour();
+			Texture tex = renderComp->getTexture();
+
+			/*
+			float screenBounds[4];
+			screenBounds[0] = ((objPos.x - cameraPos.x) - (renderSize.x / 2.0f)) / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0f);
+			screenBounds[1] = ((objPos.y - cameraPos.y) + (renderSize.y / 2.0f)) / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0f);
+			screenBounds[2] = renderSize.x / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0f);
+			screenBounds[3] = renderSize.y / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0f);
+			*/
+
+			
+			vertexData = new float[32]{
+				worldToScreenCoords(renderComp->getVertexWorldPosition(1)).x,   worldToScreenCoords(renderComp->getVertexWorldPosition(1)).y,   1.0f,    renderColour[0],    renderColour[1],    renderColour[2],    1.0f, 0.0f,
+				worldToScreenCoords(renderComp->getVertexWorldPosition(2)).x,   worldToScreenCoords(renderComp->getVertexWorldPosition(2)).y,   1.0f,    renderColour[0],    renderColour[1],    renderColour[2],    1.0f, 1.0f,
+				worldToScreenCoords(renderComp->getVertexWorldPosition(3)).x,   worldToScreenCoords(renderComp->getVertexWorldPosition(3)).y,   1.0f,    renderColour[0],    renderColour[1],    renderColour[2],    0.0f, 1.0f,
+				worldToScreenCoords(renderComp->getVertexWorldPosition(4)).x,   worldToScreenCoords(renderComp->getVertexWorldPosition(4)).y,   1.0f,    renderColour[0],    renderColour[1],    renderColour[2],    0.0f, 0.0f
+			};
+			
+
+			indiceData = new int[6]{
+				0, 1, 3,
+				1, 2, 3
+			};
+
+			GLuint vao, vbo, ebo;
+
+			glGenVertexArrays(1, &vao);
+			glGenBuffers(1, &vbo);
+			glGenBuffers(1, &ebo);
+
+			glBindVertexArray(vao);
+
+			// Bind the data to the vertex buffer
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 32, vertexData, GL_STATIC_DRAW);
+
+			// Bind the data to the element buffer
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * 6, indiceData, GL_STATIC_DRAW);
+
+			// position attribute
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(0);
+
+			// color attribute
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+			glEnableVertexAttribArray(1);
+
+			// texture coord attribute
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+			glEnableVertexAttribArray(2);
+
+			glActiveTexture(0);
+			glBindTexture(GL_TEXTURE_2D, tex.getId());
+
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex.getWidth(), tex.getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, tex.getData());
+
+			glUseProgram(m_shaderProgramId);
+			glUniform1i(glGetUniformLocation(m_shaderProgramId, "ourTexture"), 0);
+
+			glBindVertexArray(vao);
+
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+			glDeleteBuffers(1, &ebo);
+			glDeleteBuffers(1, &vbo);
+			glDeleteVertexArrays(1, &vao);
+
+			delete[] vertexData;
+			delete[] indiceData;
+			
+			itemsRendered++;
+		}
 	}
+
+	m_itemsRenderedLastFrame = itemsRendered;
 }
 
 void RenderSystem::close() {
@@ -167,6 +257,20 @@ std::string RenderSystem::getShaderInfoMsg(const GLuint shaderId) {
 	}
 
 	return returnStr;
+}
+
+int RenderSystem::getRenderCountLastFrame() {
+	return m_itemsRenderedLastFrame;
+}
+
+b2Vec2 RenderSystem::worldToScreenCoords(b2Vec2 worldPos) {
+	b2Vec2 screenCoords = b2Vec2(0, 0);
+	b2Vec2 cameraPos = Camera::getInstance()->getPosition();
+
+	screenCoords.x = ((worldPos.x - cameraPos.x) / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0f));
+	screenCoords.y = ((worldPos.y + cameraPos.y) / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0f));
+
+	return screenCoords;
 }
 
 RenderSystem* RenderSystem::getInstance() {
