@@ -169,6 +169,8 @@ Object* Object::getObjectByName(std::string n) {
 		if ((*it)->m_name == n) {
 			return (*it);
 		}
+
+		it++;
 	}
 
 	return nullptr;
@@ -181,6 +183,8 @@ Object* Object::getObjectById(int id) {
 		if ((*it)->m_id == id) {
 			return (*it);
 		}
+
+		it++;
 	}
 
 	return nullptr;
