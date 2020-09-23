@@ -22,6 +22,7 @@ ComponentScript* Object::addComponentScript(ComponentScript* script) {
 	ComponentScript* currentScriptOfType = getComponentScript(script->getTypeString());
 
 	if (currentScriptOfType == nullptr) {
+		script->setParentId(m_id);
 		m_components.push_back(script);
 		return script;
 	}
@@ -126,10 +127,11 @@ void Object::setPosition(const b2Vec2& vec) {
 }
 
 float Object::getRotation() {
-	return 0;
+	return m_rotation;
 }
 
 void Object::setRotation(float r) {
+	m_rotation = r;
 }
 
 void Object::setActiveStatus(bool v) {
