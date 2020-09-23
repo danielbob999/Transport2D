@@ -22,6 +22,7 @@ private:
 	bool m_shouldBeLooping;
 	GLFWwindow* m_window;
 	double m_runTime;
+	double m_lastFrameDelta;
 
 	Console* m_console;
 	InputSystem* m_inputSystem;
@@ -37,6 +38,7 @@ public:
 	~Core();
 
 	double getRunTime();
+	double getLastFrameDelta();
 
 	static void start(void (*sFn)());
 	static void stop();

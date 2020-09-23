@@ -64,23 +64,23 @@ void Core::run() {
           Call all the Core Systems update functions here
          ===================================
         */
-        m_renderSystem->update(glfwGetTime() - m_runTime);
-        m_inputSystem->update(glfwGetTime() - m_runTime); // This must come after every other update
+        m_renderSystem->update(m_lastFrameDelta);
+        m_inputSystem->update(m_lastFrameDelta); // This must come after every other update
 
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Render background colour
         float* backgroundColour = Camera::getInstance()->getBackgroundColour();
-        glColor3f(backgroundColour[0], backgroundColour[1], backgroundColour[2]);
+        glClearColor(backgroundColour[0], backgroundColour[1], backgroundColour[2], 1.0f);
 
         /*
          ===================================
           Call all the Core Systems render functions here
          ===================================
         */
-        m_inputSystem->render(glfwGetTime() - m_runTime);
-        m_renderSystem->render(glfwGetTime() - m_runTime);
+        m_inputSystem->render(m_lastFrameDelta);
+        m_renderSystem->render(m_lastFrameDelta);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(m_window);
@@ -88,6 +88,7 @@ void Core::run() {
         /* Poll for and process events */
         glfwPollEvents();
 
+        m_lastFrameDelta = glfwGetTime() - m_runTime;
         m_runTime = glfwGetTime();
     }
 
@@ -130,6 +131,10 @@ Core::Core() {
 
 double Core::getRunTime() {
     return m_runTime;
+}
+
+double Core::getLastFrameDelta() {
+    return m_lastFrameDelta;
 }
 
 void Core::start(void (*iFn)()) {
