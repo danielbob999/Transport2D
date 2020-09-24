@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include "imgui/imgui.h"
 
 struct LogMsg {
 	int msgCode;
@@ -15,9 +16,14 @@ private:
 
 	void saveToFile();
 	std::string generateLogStr(const int&, const std::string&);
+	void submitCommandCallback(std::string);
+	void logInput(const std::string&);
+	void logInput(const char*);
 public:
 	Console();
 	~Console();
+
+	void update();
 
 	static void log(const std::string&);
 	static void log(const char*);

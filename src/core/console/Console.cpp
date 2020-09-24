@@ -14,6 +14,42 @@ Console::Console() {
 	s_instance = this;
 }
 
+void Console::update() {
+	std::string logStr = "";
+
+	for (int i = 0; i < m_messages.size(); i++) {
+		logStr += (*m_messages[i].msg) + "\n";
+	}
+
+	ImGui::Begin("Console");
+
+	ImGui::Text(logStr.c_str());
+	char buffer[1024] = "";
+	
+	if (ImGui::InputText("", buffer, 1024, 32)) {
+		submitCommandCallback(buffer);
+	}
+
+	ImGui::End();
+}
+
+void Console::submitCommandCallback(std::string data) {
+	//Console::log("> " + data);
+	logInput(data);
+}
+
+void Console::logInput(const std::string& str) {
+	// MsgCodes: 0 = message, 1 = warning, 2 = error, 3 = input
+	LogMsg lm = { 3, new std::string(getInstance()->generateLogStr(3, str)) };
+	getInstance()->m_messages.push_back(lm);
+
+	std::cout << *(lm.msg) << std::endl;
+}
+
+void Console::logInput(const char* str) {
+	logInput(std::string(str));
+}
+
 /* Regular log functions */
 void Console::log(const std::string& str) {
 	// MsgCodes: 0 = message, 1 = warning, 2 = error
@@ -49,7 +85,7 @@ std::string Console::ptrToString(void* ptr) {
 std::string Console::generateLogStr(const int& mode, const std::string& msg) {
 	std::stringstream ss;
 
-	ss << "[" << std::setprecision(3) << Core::getInstance()->getRunTime() << "][";
+	ss << "[" << std::fixed<< std::setprecision(3) << Core::getInstance()->getRunTime() << "][";
 
 	switch (mode) {
 		case 1:
@@ -58,12 +94,15 @@ std::string Console::generateLogStr(const int& mode, const std::string& msg) {
 		case 2:
 			ss << "err";
 			break;
+		case 3:
+			ss << "inp";
+			break;
 		default:
 			ss << "msg";
 			break;
 	}
 
-	ss << "] " << msg;
+	ss << "] " << std::defaultfloat << msg;
 
 	return ss.str();
 }

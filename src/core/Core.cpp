@@ -58,6 +58,7 @@ void Core::run() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& imGuiIO = ImGui::GetIO(); (void)imGuiIO;
+    imGuiIO.IniFilename = NULL;
 
     ImGui::StyleColorsLight();
 
@@ -95,6 +96,7 @@ void Core::run() {
         */
         m_renderSystem->update(m_lastFrameDelta);
         m_inputSystem->update(m_lastFrameDelta); // This must come after every other update
+        m_console->update();
 
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
