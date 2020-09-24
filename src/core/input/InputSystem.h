@@ -2,6 +2,7 @@
 #include "InputKeyDefs.h"
 #include "../../../includes/GLFW/glfw3.h"
 #include "../coresystem/CoreSystem.h"
+#include "imgui/imgui.h"
 
 namespace core_input {
 	class InputSystem : public CoreSystem {
