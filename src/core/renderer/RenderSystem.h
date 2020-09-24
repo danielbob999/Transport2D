@@ -4,6 +4,7 @@
 #include "GLIncludes.h"
 #include "Camera.h"
 #include "Texture.h"
+#include "imgui/imgui.h"
 
 namespace core_renderer {
 	class RenderSystem : public CoreSystem {

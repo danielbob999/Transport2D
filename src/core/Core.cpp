@@ -5,6 +5,7 @@
 #include "input/InputSystem.h"
 #include "renderer/RenderSystem.h"
 #include "renderer/Camera.h"
+
 using namespace core_input;
 using namespace core_objectsystem;
 
@@ -35,6 +36,9 @@ void Core::run() {
     glfwWindowHint(GLFW_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_VERSION_MINOR, 3);
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+
     /* Create a windowed mode window and its OpenGL context */
     m_window = glfwCreateWindow(1152, 648, "Transport2D", NULL, NULL);
 
@@ -50,6 +54,15 @@ void Core::run() {
     glfwSetWindowSizeCallback(m_window, glfwWindowResizeCallbackFn);
 
     glewInit();
+
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& imGuiIO = ImGui::GetIO(); (void)imGuiIO;
+
+    ImGui::StyleColorsLight();
+
+    ImGui_ImplGlfw_InitForOpenGL(m_window, true);
+    ImGui_ImplOpenGL3_Init("#version 130");
 
     /* 
      ===================================
@@ -67,6 +80,11 @@ void Core::run() {
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(m_window) && m_shouldBeLooping) {
+        // Start a new GUI frame here. ImGui cal be called from all update functions
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
         // Call the update function of all ComponentScripts connected to Objects
         callObjectLoop(1);
 
@@ -93,6 +111,9 @@ void Core::run() {
         m_inputSystem->render(m_lastFrameDelta);
         m_renderSystem->render(m_lastFrameDelta);
 
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         /* Swap front and back buffers */
         glfwSwapBuffers(m_window);
 
@@ -115,6 +136,11 @@ void Core::run() {
     m_inputSystem->close();
     m_renderSystem->close();
 
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
+    glfwDestroyWindow(m_window);
     glfwTerminate();
 
 }

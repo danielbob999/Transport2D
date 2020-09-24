@@ -6,6 +6,9 @@
 #include "input/InputSystem.h"
 #include "input/InputKeyDefs.h"
 #include "renderer/RenderSystem.h"
+#include "../../includes/imgui/imgui.h"
+#include "../../includes/imgui/imgui_impl_glfw.h"
+#include "../../includes/imgui/imgui_impl_opengl3.h"
 using namespace core_input;
 using namespace core_renderer;
 

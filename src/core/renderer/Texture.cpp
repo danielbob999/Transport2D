@@ -1,5 +1,6 @@
 #include "Texture.h"
-#include "../../../includes/GLEW/glew.h"
+//#include "../../../includes/GLEW/glew.h"
+#include "GLIncludes.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "../../../includes/stb_image/stb_image.h"
 #include "../console/Console.h"

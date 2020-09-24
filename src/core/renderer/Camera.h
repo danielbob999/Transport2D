@@ -1,6 +1,7 @@
 #pragma once
 #include "../../../includes/box2d/box2d.h"
-#include "../../../includes/GLEW/glew.h"
+//#include "../../../includes/GLEW/glew.h"
+#include "GLIncludes.h"
 
 namespace core_renderer {
 	class Camera {
