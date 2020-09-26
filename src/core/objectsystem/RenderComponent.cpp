@@ -146,8 +146,8 @@ void RenderComponent::setRenderPriority(int priority) {
     }
 }
 
-bool RenderComponent::compare(const RenderComponent& compL, const RenderComponent& compR) {
-    return (compL.m_renderPriority, compR.m_renderPriority);
+bool RenderComponent::operator<(const  RenderComponent& other) {
+    return (m_renderPriority < other.m_renderPriority);
 }
 
 std::string RenderComponent::getTypeString() {

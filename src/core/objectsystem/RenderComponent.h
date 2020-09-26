@@ -40,6 +40,6 @@ namespace core_objectsystem {
 
 		b2Vec2 getVertexWorldPosition(int);
 
-		bool compare(const RenderComponent&, const RenderComponent&);
+		bool operator<(const  RenderComponent& other);
 	};
 }
