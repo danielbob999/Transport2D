@@ -12,6 +12,7 @@ namespace core_objectsystem {
 		Texture m_texture;
 		float m_colour[3];
 		b2Vec2 m_size;
+		int m_renderPriority;
 	public:
 		RenderComponent();
 		~RenderComponent();
@@ -34,6 +35,11 @@ namespace core_objectsystem {
 		b2Vec2& getSize();
 		void setSize(float, float);
 
+		int getRenderPriority();
+		void setRenderPriority(int);
+
 		b2Vec2 getVertexWorldPosition(int);
+
+		bool compare(const RenderComponent&, const RenderComponent&);
 	};
 }

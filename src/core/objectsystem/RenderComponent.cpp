@@ -14,6 +14,7 @@ RenderComponent::RenderComponent() {
 	m_texture = RenderSystem::getDefaultTexture();
 	m_shouldRender = true;
 	m_size = b2Vec2(1, 1);
+    m_renderPriority = 100;
 }
 
 void RenderComponent::start() {
@@ -133,6 +134,20 @@ b2Vec2 RenderComponent::getVertexWorldPosition(int vertId) {
     }
 
     return b2Vec2(-1, -1);
+}
+
+int RenderComponent::getRenderPriority() {
+    return m_renderPriority;
+}
+
+void RenderComponent::setRenderPriority(int priority) {
+    if (priority > 0) {
+        m_renderPriority = priority;
+    }
+}
+
+bool RenderComponent::compare(const RenderComponent& compL, const RenderComponent& compR) {
+    return (compL.m_renderPriority, compR.m_renderPriority);
 }
 
 std::string RenderComponent::getTypeString() {
