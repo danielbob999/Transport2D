@@ -1,6 +1,7 @@
 #include "RenderSystem.h"
 #include <vector>
 #include <fstream>
+#include <algorithm>
 #include "../objectsystem/ComponentScript.h"
 #include "../objectsystem/Object.h"
 #include "../console/Console.h"
@@ -72,7 +73,24 @@ void RenderSystem::update(double delta) {
 
 void RenderSystem::render(double delta) {
 	std::vector<Object*> objs = Object::getObjects();
-	
+	std::vector<RenderComponent*> renderComponents;
+
+	// Loop through all Objects and get all the RenderComponents.
+	//		Only add valid components that should be rendered (shouldRender() == true) to the vector
+	for (int i = 0; i < objs.size(); i++) {
+		RenderComponent* rc = (RenderComponent*)objs[i]->getComponentScript("RenderComponent");
+
+		if (rc != nullptr) {
+			if (rc->getShouldRender()) {
+				renderComponents.push_back(rc);
+			}
+		}
+	}
+
+	// Sort the vector so that Objects are rendered based on their m_renderPriority
+	std::sort(renderComponents.begin(), renderComponents.end(), [](RenderComponent* rhs, RenderComponent* lhs) 
+		{ return rhs->getRenderPriority() < lhs->getRenderPriority(); });
+
 	glEnable(GL_TEXTURE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -84,92 +102,72 @@ void RenderSystem::render(double delta) {
 
 	int itemsRendered = 0;
 
-	for (int i = 0; i < objs.size(); i++) {
-		RenderComponent* renderComp = (RenderComponent*)objs[i]->getComponentScript("RenderComponent");
+	for (int i = 0; i < renderComponents.size(); i++) {
+		b2Vec2 renderSize = renderComponents[i]->getSize();
+		float* renderColour = renderComponents[i]->getColour();
+		Texture tex = renderComponents[i]->getTexture();
 
-		if (renderComp == nullptr) {
-			continue;
-		}
+		float vertexData[32] = {
+			worldToScreenCoords(renderComponents[i]->getVertexWorldPosition(1)).x,   worldToScreenCoords(renderComponents[i]->getVertexWorldPosition(1)).y,   1.0f,    renderColour[0],    renderColour[1],    renderColour[2],    1.0f, 0.0f,
+			worldToScreenCoords(renderComponents[i]->getVertexWorldPosition(2)).x,   worldToScreenCoords(renderComponents[i]->getVertexWorldPosition(2)).y,   1.0f,    renderColour[0],    renderColour[1],    renderColour[2],    1.0f, 1.0f,
+			worldToScreenCoords(renderComponents[i]->getVertexWorldPosition(3)).x,   worldToScreenCoords(renderComponents[i]->getVertexWorldPosition(3)).y,   1.0f,    renderColour[0],    renderColour[1],    renderColour[2],    0.0f, 1.0f,
+			worldToScreenCoords(renderComponents[i]->getVertexWorldPosition(4)).x,   worldToScreenCoords(renderComponents[i]->getVertexWorldPosition(4)).y,   1.0f,    renderColour[0],    renderColour[1],    renderColour[2],    0.0f, 0.0f
+		};
 
-		if (renderComp->getShouldRender()) {
-			b2Vec2 objPos = objs[i]->getPosition();
-			b2Vec2 cameraPos = Camera::getInstance()->getPosition();
-			b2Vec2 renderSize = renderComp->getSize();
 
-			float* renderColour = renderComp->getColour();
-			Texture tex = renderComp->getTexture();
+		int indiceData[6] = {
+			0, 1, 3,
+			1, 2, 3
+		};
 
-			/*
-			float screenBounds[4];
-			screenBounds[0] = ((objPos.x - cameraPos.x) - (renderSize.x / 2.0f)) / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0f);
-			screenBounds[1] = ((objPos.y - cameraPos.y) + (renderSize.y / 2.0f)) / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0f);
-			screenBounds[2] = renderSize.x / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0f);
-			screenBounds[3] = renderSize.y / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0f);
-			*/
+		GLuint vao, vbo, ebo;
 
-			
-			float vertexData[32] = {
-				worldToScreenCoords(renderComp->getVertexWorldPosition(1)).x,   worldToScreenCoords(renderComp->getVertexWorldPosition(1)).y,   1.0f,    renderColour[0],    renderColour[1],    renderColour[2],    1.0f, 0.0f,
-				worldToScreenCoords(renderComp->getVertexWorldPosition(2)).x,   worldToScreenCoords(renderComp->getVertexWorldPosition(2)).y,   1.0f,    renderColour[0],    renderColour[1],    renderColour[2],    1.0f, 1.0f,
-				worldToScreenCoords(renderComp->getVertexWorldPosition(3)).x,   worldToScreenCoords(renderComp->getVertexWorldPosition(3)).y,   1.0f,    renderColour[0],    renderColour[1],    renderColour[2],    0.0f, 1.0f,
-				worldToScreenCoords(renderComp->getVertexWorldPosition(4)).x,   worldToScreenCoords(renderComp->getVertexWorldPosition(4)).y,   1.0f,    renderColour[0],    renderColour[1],    renderColour[2],    0.0f, 0.0f
-			};
-			
+		glGenVertexArrays(1, &vao);
+		glGenBuffers(1, &vbo);
+		glGenBuffers(1, &ebo);
 
-			int indiceData[6] = {
-				0, 1, 3,
-				1, 2, 3
-			};
+		glBindVertexArray(vao);
 
-			GLuint vao, vbo, ebo;
+		// Bind the data to the vertex buffer
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 32, vertexData, GL_STATIC_DRAW);
 
-			glGenVertexArrays(1, &vao);
-			glGenBuffers(1, &vbo);
-			glGenBuffers(1, &ebo);
+		// Bind the data to the element buffer
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * 6, indiceData, GL_STATIC_DRAW);
 
-			glBindVertexArray(vao);
+		// position attribute
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
 
-			// Bind the data to the vertex buffer
-			glBindBuffer(GL_ARRAY_BUFFER, vbo);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 32, vertexData, GL_STATIC_DRAW);
+		// color attribute
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(1);
 
-			// Bind the data to the element buffer
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * 6, indiceData, GL_STATIC_DRAW);
+		// texture coord attribute
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+		glEnableVertexAttribArray(2);
 
-			// position attribute
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-			glEnableVertexAttribArray(0);
+		glActiveTexture(0);
+		glBindTexture(GL_TEXTURE_2D, tex.getId());
 
-			// color attribute
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-			glEnableVertexAttribArray(1);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex.getWidth(), tex.getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, tex.getData());
 
-			// texture coord attribute
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-			glEnableVertexAttribArray(2);
+		glUseProgram(m_shaderProgramId);
+		glUniform1i(glGetUniformLocation(m_shaderProgramId, "ourTexture"), 0);
 
-			glActiveTexture(0);
-			glBindTexture(GL_TEXTURE_2D, tex.getId());
+		glBindVertexArray(vao);
 
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex.getWidth(), tex.getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, tex.getData());
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-			glUseProgram(m_shaderProgramId);
-			glUniform1i(glGetUniformLocation(m_shaderProgramId, "ourTexture"), 0);
+		glDeleteBuffers(1, &ebo);
+		glDeleteBuffers(1, &vbo);
+		glDeleteVertexArrays(1, &vao);
 
-			glBindVertexArray(vao);
+		//delete[] vertexData;
+		//delete[] indiceData;
 
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-			glDeleteBuffers(1, &ebo);
-			glDeleteBuffers(1, &vbo);
-			glDeleteVertexArrays(1, &vao);
-
-			//delete[] vertexData;
-			//delete[] indiceData;
-			
-			itemsRendered++;
-		}
+		itemsRendered++;
 	}
 
 	m_itemsRenderedLastFrame = itemsRendered;
