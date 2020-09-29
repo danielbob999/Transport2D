@@ -1,4 +1,5 @@
 #include "AudioClip.h"
+#include "../console/Console.h"
 #define MINIMP3_IMPLEMENTATION
 #include "minimp3/minimp3.h"
 #include "minimp3/minimp3_ex.h"
@@ -15,10 +16,11 @@ AudioClip::AudioClip(const char* path) {
 	alGenBuffers(1, &m_clipID);
 	alBufferData(m_clipID, m_openALFormat, m_clipInfo.buffer, m_clipSize, m_clipSampleRate);
 
+	Console::log("Generated new AudioClip. ID=" + std::to_string(m_clipID));
 }
 
 AudioClip::~AudioClip() {
-
+	alDeleteBuffers(1, &m_clipID);
 }
 
 int AudioClip::getSampleRate() {
@@ -37,6 +39,14 @@ ALenum AudioClip::getOALFormat() {
 }
 ALuint AudioClip::getClipID() {
 	return m_clipID;
+}
+
+int AudioClip::getClipSize() {
+	return m_clipSize;
+}
+
+mp3d_sample_t* AudioClip::getData() {
+	return m_clipInfo.buffer;
 }
 
 ALenum AudioClip::setOALFormat(uint32_t channels) {

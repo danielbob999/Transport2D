@@ -32,6 +32,7 @@ namespace core_audio {
 
 		ALenum getOALFormat();
 		ALuint getClipID();
-
+		int getClipSize();
+		mp3d_sample_t* getData();
 	};
 }

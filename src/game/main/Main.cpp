@@ -11,11 +11,15 @@
 using namespace core_audio;
 using namespace core_objectsystem;
 void init() {
-	AudioClip ac = AudioClip("res/audio/GameSong1.mp3");
-	AudioComponent acomp = AudioComponent();
-	acomp.setAudioClip(&ac);
-	Console::log(std::to_string(ac.getClipID()));
-	acomp.playAudio();
+	AudioClip* ac = new AudioClip("res/audio/GameSong1.mp3");
+	AudioComponent* acomp = new AudioComponent();
+	acomp->setAudioClip(ac);
+
+	TestCompScript* tcs = new TestCompScript();
+
+	Object* obj = Object::createObject("CuntNugget", 0, 0);
+	obj->addComponentScript(acomp);
+	obj->addComponentScript(tcs);
 }
 
 int main() {

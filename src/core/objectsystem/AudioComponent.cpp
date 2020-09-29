@@ -3,15 +3,16 @@
 using namespace core_objectsystem;
 
 AudioComponent::AudioComponent() {
-	ALenum error;
 	m_audioVolume = 0.5f;
-	m_audioPitch = 0.5f;
+	m_audioPitch = 0.0f;
 	m_audioPlaying = false;
 	alGenSources(1, &m_audioSourceID);
-	if ((error = alGetError()) != AL_NO_ERROR) {
-		Console::logError("Failed to generate AudioComponent: " + error);
+	ALenum error = alGetError();
+	if (error != AL_NO_ERROR) {
+		Console::logError("Failed to generate AudioComponent: ");
 		return;
 	}
+
 	Console::log("Successfully generate AudioComponent. ID=" + std::to_string(m_audioSourceID));
 }
 
@@ -50,11 +51,24 @@ void AudioComponent::pauseAudio() {
 bool AudioComponent::playAudio() {
 	m_audioPlaying = true;
 	if (clipIsSet()) {
-		alSourcei(m_audioSourceID, AL_LOOPING, false);
+		Console::log("CLIP IS SET!!!");
+		alBufferData(m_audioClip->getClipID(), AL_FORMAT_MONO16, m_audioClip->getData(), m_audioClip->getClipSize(), m_audioClip->getSampleRate());
 		alSourcei(m_audioSourceID, AL_BUFFER, m_audioClip->getClipID());
+		alSourcei(m_audioSourceID, AL_LOOPING, false);
 		alSourcef(m_audioSourceID, AL_GAIN, m_audioVolume);
 		alSourcef(m_audioSourceID, AL_PITCH, m_audioPitch);
+		ALint f;
+		alGetSourcei(m_audioSourceID, AL_SOURCE_STATE, &f);
+
+		Console::log("Source state before: " + std::to_string(f));
+
 		alSourcePlay(m_audioSourceID);
+
+		ALint d;
+		alGetSourcei(m_audioSourceID, AL_SOURCE_STATE, &d);
+
+		Console::log("Source state after: " + std::to_string(d));
+
 		return true;
 	}
 	return false;
