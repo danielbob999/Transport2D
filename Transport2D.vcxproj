@@ -158,6 +158,7 @@
     <ClCompile Include="src\core\objectsystem\ComponentScript.cpp" />
     <ClCompile Include="src\core\objectsystem\Object.cpp" />
     <ClCompile Include="src\core\objectsystem\RenderComponent.cpp" />
+    <ClCompile Include="src\core\physics\draw.cpp" />
     <ClCompile Include="src\core\renderer\Camera.cpp" />
     <ClCompile Include="src\core\renderer\RenderSystem.cpp" />
     <ClCompile Include="src\core\renderer\Texture.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="src\core\objectsystem\ComponentScript.h" />
     <ClInclude Include="src\core\objectsystem\Object.h" />
     <ClInclude Include="src\core\objectsystem\RenderComponent.h" />
+    <ClInclude Include="src\core\physics\draw.h" />
     <ClInclude Include="src\core\renderer\Camera.h" />
     <ClInclude Include="src\core\renderer\GLIncludes.h" />
     <ClInclude Include="src\core\renderer\RenderSystem.h" />

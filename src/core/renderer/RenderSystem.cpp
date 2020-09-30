@@ -30,6 +30,9 @@ void RenderSystem::start() {
 	m_camera = new Camera(width, height);
 	m_camera->setZoomFactor(15);
 
+	m_renderBox2d = true;
+	m_renderObjectOrigins = true;
+
 	std::fstream fileStream;
 	// Open the filestream and get the vertex source code from the file
 	fileStream.open("res/shaders/vertex_shader.vs");
@@ -72,6 +75,24 @@ void RenderSystem::update(double delta) {
 }
 
 void RenderSystem::render(double delta) {
+	glEnable(GL_TEXTURE);
+	glEnable(GL_BLEND);
+	glEnable(GL_PROGRAM_POINT_SIZE);
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
+	glEnableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_INDEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	renderComponents();
+
+	renderObjectOrigins();
+
+	renderBox2d();
+}
+
+void RenderSystem::renderComponents() {
 	std::vector<Object*> objs = Object::getObjects();
 	std::vector<RenderComponent*> renderComponents;
 
@@ -88,17 +109,7 @@ void RenderSystem::render(double delta) {
 	}
 
 	// Sort the vector so that Objects are rendered based on their m_renderPriority
-	std::sort(renderComponents.begin(), renderComponents.end(), [](RenderComponent* rhs, RenderComponent* lhs) 
-		{ return rhs->getRenderPriority() < lhs->getRenderPriority(); });
-
-	glEnable(GL_TEXTURE);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-	glEnableClientState(GL_COLOR_ARRAY);
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_INDEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	std::sort(renderComponents.begin(), renderComponents.end(), [](RenderComponent* rhs, RenderComponent* lhs) { return rhs->getRenderPriority() < lhs->getRenderPriority(); });
 
 	int itemsRendered = 0;
 
@@ -171,6 +182,63 @@ void RenderSystem::render(double delta) {
 	}
 
 	m_itemsRenderedLastFrame = itemsRendered;
+}
+
+void RenderSystem::renderBox2d() {
+	if (m_renderBox2d) {
+		/*
+		glBegin(GL_LINES);
+		glColor3b(0, 255, 0);
+
+		int bodyCount = 1;
+		// int bodyCount = PhysicsSystem::getInstance()::getWorldInstance()->GetBodyCount();
+		b2Body* bodies;
+		// b2Body* bodies = PhysicsSystem::getInstance()::getWorldInstance()->GetBodyList();
+
+		for (int i = 0; i < bodyCount; i++) {
+			//if (i == 1) break;
+			glVertex2f(worldToScreenCoords(b2Vec2(0, 0)).x, worldToScreenCoords(b2Vec2(0, 0)).y);
+			glVertex2f(worldToScreenCoords(b2Vec2(4, 0)).x, worldToScreenCoords(b2Vec2(4, 0)).y);
+		}
+
+		glEnd();
+		*/
+
+		// PhysicsSystem::getInstance()->getWorldInstance()->DebugDraw();
+	}
+}
+
+void RenderSystem::renderObjectOrigins() {
+	glPointSize(5);
+
+	if (m_renderObjectOrigins) {
+		glBegin(GL_POINTS);
+
+		std::vector<Object*> objects = Object::getObjects();
+
+		for (int i = 0; i < objects.size(); i++) {
+			glColor3b(0, 0, 0);
+			glVertex2f(worldToScreenCoords(objects[i]->getPosition()).x, worldToScreenCoords(objects[i]->getPosition()).y);
+		}
+
+		glEnd();
+	}
+}
+
+void RenderSystem::setBox2dRenderStatus(bool v) {
+	m_renderBox2d = v;
+}
+
+bool RenderSystem::getBox2dRenderStatus() {
+	return m_renderBox2d;
+}
+
+void RenderSystem::setOriginRenderStatus(bool v) {
+	m_renderObjectOrigins = v;
+}
+
+bool RenderSystem::getOriginRenderStatus() {
+	return m_renderObjectOrigins;
 }
 
 void RenderSystem::close() {
