@@ -72,6 +72,15 @@
     <ClCompile Include="includes\imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\objectsystem\AudioComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\audio\AudioClip.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\audio\AudioManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\core\physics\draw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -144,6 +153,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="includes\imgui\imstb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\objectsystem\AudioComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\audio\AudioClip.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\audio\AudioManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\physics\draw.h">

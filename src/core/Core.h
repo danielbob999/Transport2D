@@ -9,9 +9,10 @@
 #include "../../includes/imgui/imgui.h"
 #include "../../includes/imgui/imgui_impl_glfw.h"
 #include "../../includes/imgui/imgui_impl_opengl3.h"
+#include "audio/AudioManager.h"
 using namespace core_input;
 using namespace core_renderer;
-
+using namespace core_audio;
 class Core {
 private:
 	const int VERSION_MAJOR = 1;
@@ -30,6 +31,7 @@ private:
 	Console* m_console;
 	InputSystem* m_inputSystem;
 	RenderSystem* m_renderSystem;
+	AudioManager* m_audioManager;
 
 	// Funtion pointers
 	void (*initFn)();

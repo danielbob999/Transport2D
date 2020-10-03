@@ -72,6 +72,7 @@ void Core::run() {
     */
     m_inputSystem->start();
     m_renderSystem->start();
+	m_audioManager->start();
 
     // Call the init function provided. This is where Objects/ComponentScripts should be created.
     initFn();
@@ -95,6 +96,7 @@ void Core::run() {
          ===================================
         */
         m_renderSystem->update(m_lastFrameDelta);
+		m_audioManager->update(m_lastFrameDelta);
         m_inputSystem->update(m_lastFrameDelta); // This must come after every other update
         m_console->update();
 
@@ -137,6 +139,7 @@ void Core::run() {
     */
     m_inputSystem->close();
     m_renderSystem->close();
+	m_audioManager->close();
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -188,6 +191,7 @@ void Core::start(void (*iFn)()) {
     */
     getInstance()->m_inputSystem = new InputSystem();
     getInstance()->m_renderSystem = new RenderSystem();
+	getInstance()->m_audioManager = new AudioManager();
     getInstance()->initFn = iFn;
 
 	getInstance()->m_shouldBeLooping = true;
