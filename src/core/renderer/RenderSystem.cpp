@@ -71,7 +71,16 @@ void RenderSystem::start() {
 }
 
 void RenderSystem::update(double delta) {
+	ImGui::Begin("Renderer");
 
+	std::string s = "";
+	s += "Frame Time: ";
+	s += std::to_string(delta);
+	s += "\nFPS: ";
+	int fps = 1000 / delta;
+	s += std::to_string(fps);
+	ImGui::Text(s.c_str());
+	ImGui::End();
 }
 
 void RenderSystem::render(double delta) {
