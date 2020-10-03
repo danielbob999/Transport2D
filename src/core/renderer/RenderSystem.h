@@ -15,10 +15,16 @@ namespace core_renderer {
 		Camera* m_camera;
 		Texture m_defaultTexture;
 		int m_itemsRenderedLastFrame;
+		bool m_renderBox2d;
+		bool m_renderObjectOrigins;
 
 		GLint compileAndLinkShader(const char*, const char*);
 		std::string getShaderInfoMsg(const GLuint);
-		b2Vec2 worldToScreenCoords(b2Vec2);
+
+		// Render functions
+		void renderComponents();
+		void renderBox2d();
+		void renderObjectOrigins();
 	public:
 		RenderSystem();
 		~RenderSystem();
@@ -29,6 +35,11 @@ namespace core_renderer {
 		void close() override;
 
 		int getRenderCountLastFrame();
+		void setBox2dRenderStatus(bool);
+		bool getBox2dRenderStatus();
+		void setOriginRenderStatus(bool);
+		bool getOriginRenderStatus();
+		static b2Vec2 worldToScreenCoords(b2Vec2);
 
 		static RenderSystem* getInstance();
 		static Texture& getDefaultTexture();
