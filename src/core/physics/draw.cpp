@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <iostream>
 
 #include "imgui/imgui.h"
 #include "../renderer/RenderSystem.h"
@@ -334,6 +335,7 @@ struct GLRenderLines
 
 	void Flush()
 	{
+		std::cout << "LINES: " << m_count << std::endl;
 		if (m_count == 0)
 			return;
 
@@ -457,7 +459,7 @@ struct GLRenderTriangles
 	{
 		if (m_count == 0)
 			return;
-
+		/*
 		glUseProgram(m_programId);
 
 		glBindVertexArray(m_vaoId);
@@ -477,7 +479,7 @@ struct GLRenderTriangles
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
-		glUseProgram(0);
+		glUseProgram(0);*/
 
 		m_count = 0;
 	}
@@ -551,6 +553,8 @@ void DebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2C
 		m_lines->Vertex(RenderSystem::worldToScreenCoords(p2), color);
 		p1 = p2;
 	}
+
+	std::cout << "draw poly" << std::endl;
 }
 
 //
@@ -573,6 +577,8 @@ void DebugDraw::DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, cons
 		m_lines->Vertex(RenderSystem::worldToScreenCoords(p2), color);
 		p1 = p2;
 	}
+
+	std::cout << "solid poly" << std::endl;
 }
 
 //
@@ -596,6 +602,8 @@ void DebugDraw::DrawCircle(const b2Vec2& center, float radius, const b2Color& co
 		r1 = r2;
 		v1 = v2;
 	}
+
+	std::cout << "circle" << std::endl;
 }
 
 //
@@ -641,6 +649,7 @@ void DebugDraw::DrawSolidCircle(const b2Vec2& center, float radius, const b2Vec2
 	b2Vec2 p = center + radius * axis;
 	m_lines->Vertex(RenderSystem::worldToScreenCoords(center), color);
 	m_lines->Vertex(RenderSystem::worldToScreenCoords(p), color);
+	std::cout << "solid circle" << std::endl;
 }
 
 //
@@ -648,6 +657,7 @@ void DebugDraw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& c
 {
 	m_lines->Vertex(RenderSystem::worldToScreenCoords(p1), color);
 	m_lines->Vertex(RenderSystem::worldToScreenCoords(p2), color);
+	std::cout << "segment" << std::endl;
 }
 
 //
@@ -665,12 +675,16 @@ void DebugDraw::DrawTransform(const b2Transform& xf)
 	m_lines->Vertex(RenderSystem::worldToScreenCoords(p1), green);
 	p2 = p1 + k_axisScale * xf.q.GetYAxis();
 	m_lines->Vertex(RenderSystem::worldToScreenCoords(p2), green);
+
+	std::cout << "transform" << std::endl;
 }
 
 //
 void DebugDraw::DrawPoint(const b2Vec2& p, float size, const b2Color& color)
 {
 	m_points->Vertex(RenderSystem::worldToScreenCoords(p), color, size);
+
+	std::cout << "point" << std::endl;
 }
 
 //

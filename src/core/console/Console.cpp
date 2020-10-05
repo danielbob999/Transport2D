@@ -12,30 +12,45 @@ Console::Console() {
 	}
 
 	s_instance = this;
+	m_showUI = true;
 }
 
 void Console::update() {
-	std::string logStr = "";
+	if (m_showUI) {
+		std::string logStr = "";
 
-	for (int i = 0; i < m_messages.size(); i++) {
-		logStr += (*m_messages[i].msg) + "\n";
+		for (int i = 0; i < m_messages.size(); i++) {
+			logStr += (*m_messages[i].msg) + "\n";
+		}
+
+		ImGui::SetNextWindowPos(ImVec2(5, 5), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(Camera::getInstance()->getScreenSize().x - 215, 400), ImGuiCond_FirstUseEver);
+		ImGui::Begin("Console");
+
+		ImGui::Text(logStr.c_str());
+		char buffer[1024] = "";
+
+		//ImGui::SetCursorPosY(380);
+		ImGui::SetNextItemWidth(Camera::getInstance()->getScreenSize().x - 215);
+		if (ImGui::InputText("", buffer, 1024, ImGuiInputTextFlags_EnterReturnsTrue)) {
+			submitCommandCallback(buffer);
+		}
+
+		ImGui::End();
 	}
-
-	ImGui::Begin("Console");
-
-	ImGui::Text(logStr.c_str());
-	char buffer[1024] = "";
-	
-	if (ImGui::InputText("", buffer, 1024, 32)) {
-		submitCommandCallback(buffer);
-	}
-
-	ImGui::End();
 }
 
 void Console::submitCommandCallback(std::string data) {
 	//Console::log("> " + data);
 	logInput(data);
+}
+
+void Console::setUIStatus(bool val) {
+	m_showUI = val;
+}
+
+bool Console::getUIStatus() {
+	return m_showUI;
 }
 
 void Console::logInput(const std::string& str) {

@@ -7,9 +7,12 @@
 #include "../console/Console.h"
 #include "../Core.h"
 #include "../objectsystem/RenderComponent.h"
+#include "../physics/PhysicsSystem.h"
+#include "../objectsystem/GroundBodyComponent.h"
 
 using namespace core_renderer;
 using namespace core_objectsystem;
+using namespace core_physics;
 
 RenderSystem* RenderSystem::s_instance = nullptr;
 
@@ -30,7 +33,7 @@ void RenderSystem::start() {
 	m_camera = new Camera(width, height);
 	m_camera->setZoomFactor(15);
 
-	m_renderBox2d = true;
+	m_showUI = true;
 	m_renderObjectOrigins = true;
 
 	std::fstream fileStream;
@@ -71,7 +74,21 @@ void RenderSystem::start() {
 }
 
 void RenderSystem::update(double delta) {
+	if (m_showUI) {
+		b2Vec2 screenSize = Camera::getInstance()->getScreenSize();
+		ImGui::SetNextWindowPos(ImVec2(screenSize.x - 205, 30), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiCond_FirstUseEver);
+		ImGui::Begin("Debug::Renderer");
 
+		std::string s = "";
+		s += "Frame Time: ";
+		s += std::to_string(delta);
+		s += "\nFPS: ";
+		int fps = 1000 / delta;
+		s += std::to_string(fps);
+		ImGui::Text(s.c_str());
+		ImGui::End();
+	}
 }
 
 void RenderSystem::render(double delta) {
@@ -88,8 +105,6 @@ void RenderSystem::render(double delta) {
 	renderComponents();
 
 	renderObjectOrigins();
-
-	renderBox2d();
 }
 
 void RenderSystem::renderComponents() {
@@ -184,30 +199,6 @@ void RenderSystem::renderComponents() {
 	m_itemsRenderedLastFrame = itemsRendered;
 }
 
-void RenderSystem::renderBox2d() {
-	if (m_renderBox2d) {
-		/*
-		glBegin(GL_LINES);
-		glColor3b(0, 255, 0);
-
-		int bodyCount = 1;
-		// int bodyCount = PhysicsSystem::getInstance()::getWorldInstance()->GetBodyCount();
-		b2Body* bodies;
-		// b2Body* bodies = PhysicsSystem::getInstance()::getWorldInstance()->GetBodyList();
-
-		for (int i = 0; i < bodyCount; i++) {
-			//if (i == 1) break;
-			glVertex2f(worldToScreenCoords(b2Vec2(0, 0)).x, worldToScreenCoords(b2Vec2(0, 0)).y);
-			glVertex2f(worldToScreenCoords(b2Vec2(4, 0)).x, worldToScreenCoords(b2Vec2(4, 0)).y);
-		}
-
-		glEnd();
-		*/
-
-		// PhysicsSystem::getInstance()->getWorldInstance()->DebugDraw();
-	}
-}
-
 void RenderSystem::renderObjectOrigins() {
 	glPointSize(5);
 
@@ -225,12 +216,12 @@ void RenderSystem::renderObjectOrigins() {
 	}
 }
 
-void RenderSystem::setBox2dRenderStatus(bool v) {
-	m_renderBox2d = v;
+void RenderSystem::setUIStatus(bool v) {
+	m_showUI = v;
 }
 
-bool RenderSystem::getBox2dRenderStatus() {
-	return m_renderBox2d;
+bool RenderSystem::getUIStatus() {
+	return m_showUI;
 }
 
 void RenderSystem::setOriginRenderStatus(bool v) {

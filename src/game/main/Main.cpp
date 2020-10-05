@@ -8,6 +8,7 @@
 #include "../../core/objectsystem/AudioComponent.h"
 #include "../../core/objectsystem/RenderComponent.h"
 #include "../../core/audio/AudioClip.h"
+#include "../../core/objectsystem/GroundBodyComponent.h"
 using namespace core_audio;
 using namespace core_objectsystem;
 void init() {
@@ -17,9 +18,14 @@ void init() {
 
 	TestCompScript* tcs = new TestCompScript();
 
+	GroundBodyComponent* gcdd = new GroundBodyComponent();
+
 	Object* obj = Object::createObject("CuntNugget", 0, 0);
 	obj->addComponentScript(acomp);
 	obj->addComponentScript(tcs);
+
+	Object* ojb2 = Object::createObject("GroundObject", 0, 0);
+	ojb2->addComponentScript(gcdd);
 }
 
 int main() {
