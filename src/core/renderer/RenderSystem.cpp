@@ -211,12 +211,12 @@ void RenderSystem::renderObjectOrigins() {
 	}
 }
 
-void RenderSystem::setBox2dRenderStatus(bool v) {
-	m_renderBox2d = v;
+void RenderSystem::setUIStatus(bool v) {
+	m_showUI = v;
 }
 
-bool RenderSystem::getBox2dRenderStatus() {
-	return m_renderBox2d;
+bool RenderSystem::getUIStatus() {
+	return m_showUI;
 }
 
 void RenderSystem::setOriginRenderStatus(bool v) {
