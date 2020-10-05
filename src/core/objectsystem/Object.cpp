@@ -2,6 +2,8 @@
 #include "../console/Console.h"
 #include <sstream>
 #include <string>
+#include "../../../includes/box2d/box2d.h"
+#include "ComponentScript.h"
 using namespace core_objectsystem;
 
 /* Static variables */
@@ -20,6 +22,7 @@ ComponentScript* Object::addComponentScript(ComponentScript* script) {
 	ComponentScript* currentScriptOfType = getComponentScript(script->getTypeString());
 
 	if (currentScriptOfType == nullptr) {
+		script->setParentId(m_id);
 		m_components.push_back(script);
 		return script;
 	}
@@ -34,6 +37,8 @@ ComponentScript* Object::getComponentScript(const std::string& typeString) {
 		if ((*it)->getTypeString() == typeString) {
 			return (*it);
 		}
+
+		it++;
 	}
 
 	return nullptr;
@@ -46,6 +51,8 @@ void Object::removeComponentScript(const std::string& typeString) {
 		if ((*it)->getTypeString() == typeString) {
 			m_components.erase(it);
 		}
+
+		it++;
 	}
 }
 
@@ -119,6 +126,14 @@ void Object::setPosition(const b2Vec2& vec) {
 	m_position.y = vec.y;
 }
 
+float Object::getRotation() {
+	return m_rotation;
+}
+
+void Object::setRotation(float r) {
+	m_rotation = r;
+}
+
 void Object::setActiveStatus(bool v) {
 	m_active = v;
 }
@@ -145,6 +160,34 @@ std::string& Object::getName() {
 
 int Object::getId() {
 	return m_id;
+}
+
+Object* Object::getObjectByName(std::string n) {
+	std::vector<Object*>::iterator it = s_objects.begin();
+
+	while (it != s_objects.end()) {
+		if ((*it)->m_name == n) {
+			return (*it);
+		}
+
+		it++;
+	}
+
+	return nullptr;
+}
+
+Object* Object::getObjectById(int id) {
+	std::vector<Object*>::iterator it = s_objects.begin();
+
+	while (it != s_objects.end()) {
+		if ((*it)->m_id == id) {
+			return (*it);
+		}
+
+		it++;
+	}
+
+	return nullptr;
 }
 
 bool Object::equals(const Object* obj) {

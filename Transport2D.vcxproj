@@ -97,9 +97,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATICGLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,25 +144,63 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="includes\imgui\imgui.cpp" />
+    <ClCompile Include="includes\imgui\imgui_demo.cpp" />
+    <ClCompile Include="includes\imgui\imgui_draw.cpp" />
+    <ClCompile Include="includes\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="includes\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="includes\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\core\audio\AudioClip.cpp" />
+    <ClCompile Include="src\core\audio\AudioManager.cpp" />
     <ClCompile Include="src\core\console\Console.cpp" />
     <ClCompile Include="src\core\Core.cpp" />
     <ClCompile Include="src\core\coresystem\CoreSystem.cpp" />
     <ClCompile Include="src\core\coresystem\example\ExampleSystem.cpp" />
     <ClCompile Include="src\core\input\InputSystem.cpp" />
+    <ClCompile Include="src\core\objectsystem\AudioComponent.cpp" />
     <ClCompile Include="src\core\objectsystem\ComponentScript.cpp" />
+    <ClCompile Include="src\core\objectsystem\DrawablePhysicsComponent.cpp" />
+    <ClCompile Include="src\core\objectsystem\GroundBodyComponent.cpp" />
     <ClCompile Include="src\core\objectsystem\Object.cpp" />
+    <ClCompile Include="src\core\objectsystem\RenderComponent.cpp" />
+    <ClCompile Include="src\core\physics\draw.cpp" />
+    <ClCompile Include="src\core\physics\PhysicsSystem.cpp" />
+    <ClCompile Include="src\core\renderer\Camera.cpp" />
+    <ClCompile Include="src\core\renderer\RenderSystem.cpp" />
+    <ClCompile Include="src\core\renderer\Texture.cpp" />
     <ClCompile Include="src\game\main\Main.cpp" />
     <ClCompile Include="src\game\main\TestCompScript.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\imgui\imconfig.h" />
+    <ClInclude Include="includes\imgui\imgui.h" />
+    <ClInclude Include="includes\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="includes\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="includes\imgui\imgui_internal.h" />
+    <ClInclude Include="includes\imgui\imstb_rectpack.h" />
+    <ClInclude Include="includes\imgui\imstb_textedit.h" />
+    <ClInclude Include="includes\imgui\imstb_truetype.h" />
+    <ClInclude Include="includes\stb_image\stb_image.h" />
+    <ClInclude Include="src\core\audio\AudioClip.h" />
+    <ClInclude Include="src\core\audio\AudioManager.h" />
     <ClInclude Include="src\core\console\Console.h" />
     <ClInclude Include="src\core\Core.h" />
     <ClInclude Include="src\core\coresystem\CoreSystem.h" />
     <ClInclude Include="src\core\coresystem\example\ExampleSystem.h" />
     <ClInclude Include="src\core\input\InputSystem.h" />
     <ClInclude Include="src\core\input\InputKeyDefs.h" />
+    <ClInclude Include="src\core\objectsystem\AudioComponent.h" />
     <ClInclude Include="src\core\objectsystem\ComponentScript.h" />
+    <ClInclude Include="src\core\objectsystem\DrawablePhysicsComponent.h" />
+    <ClInclude Include="src\core\objectsystem\GroundBodyComponent.h" />
     <ClInclude Include="src\core\objectsystem\Object.h" />
+    <ClInclude Include="src\core\objectsystem\RenderComponent.h" />
+    <ClInclude Include="src\core\physics\draw.h" />
+    <ClInclude Include="src\core\physics\PhysicsSystem.h" />
+    <ClInclude Include="src\core\renderer\Camera.h" />
+    <ClInclude Include="src\core\renderer\GLIncludes.h" />
+    <ClInclude Include="src\core\renderer\RenderSystem.h" />
+    <ClInclude Include="src\core\renderer\Texture.h" />
     <ClInclude Include="src\game\main\TestCompScript.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

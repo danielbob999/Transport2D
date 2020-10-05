@@ -30,7 +30,16 @@ InputSystem::InputSystem() {
 }
 
 void InputSystem::inputCallbackFn(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	if (ImGui::GetIO().WantCaptureKeyboard) {
+		return;
+	}
+
 	if (action == GLFW_PRESS) {
+		if (key == KEYBOARD_KEY_BACKSLASH) {
+			Console::getInstance()->setUIStatus(!Console::getInstance()->getUIStatus());
+			return;
+		}
+
 		if (!getInstance()->m_keysDownLocker[key]) { // if the down press on this key isn't locked
 			getInstance()->m_keysDownThisFrame[key] = true;
 			getInstance()->m_keysDownLocker[key] = true;

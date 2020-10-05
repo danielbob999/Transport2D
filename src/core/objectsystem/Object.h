@@ -15,6 +15,7 @@ namespace core_objectsystem {
 		bool m_active;
 		bool m_shouldRender;
 		b2Vec2 m_position;
+		float m_rotation; //  The rotation of the Object in radians (NOT DEGREES)
 		std::vector<ComponentScript*> m_components;
 
 	public:
@@ -28,6 +29,9 @@ namespace core_objectsystem {
 		b2Vec2& getPosition();										// Gets the current position of the Object
 		void setPosition(float, float);								// Sets the current position of the Object
 		void setPosition(const b2Vec2&);
+
+		float getRotation();
+		void setRotation(float);
 
 		void setActiveStatus(bool);									// Sets whether the Object is active in the game
 		bool getActiveStatus();										// Gets the active status of the Object
@@ -45,5 +49,7 @@ namespace core_objectsystem {
 		static Object* createObject();									// Creates a new Object with the default values
 		static Object* createObject(const std::string&, int x, int y);	// Creates a new Object with the supplied values
 		static std::vector<Object*>& getObjects();
+		static Object* getObjectByName(std::string);
+		static Object* getObjectById(int);
 	};
 }
