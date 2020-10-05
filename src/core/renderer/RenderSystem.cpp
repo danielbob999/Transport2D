@@ -33,7 +33,7 @@ void RenderSystem::start() {
 	m_camera = new Camera(width, height);
 	m_camera->setZoomFactor(15);
 
-	m_renderBox2d = true;
+	m_showUI = true;
 	m_renderObjectOrigins = true;
 
 	std::fstream fileStream;
@@ -74,16 +74,21 @@ void RenderSystem::start() {
 }
 
 void RenderSystem::update(double delta) {
-	ImGui::Begin("Renderer");
+	if (m_showUI) {
+		b2Vec2 screenSize = Camera::getInstance()->getScreenSize();
+		ImGui::SetNextWindowPos(ImVec2(screenSize.x - 205, 30), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiCond_FirstUseEver);
+		ImGui::Begin("Debug::Renderer");
 
-	std::string s = "";
-	s += "Frame Time: ";
-	s += std::to_string(delta);
-	s += "\nFPS: ";
-	int fps = 1000 / delta;
-	s += std::to_string(fps);
-	ImGui::Text(s.c_str());
-	ImGui::End();
+		std::string s = "";
+		s += "Frame Time: ";
+		s += std::to_string(delta);
+		s += "\nFPS: ";
+		int fps = 1000 / delta;
+		s += std::to_string(fps);
+		ImGui::Text(s.c_str());
+		ImGui::End();
+	}
 }
 
 void RenderSystem::render(double delta) {

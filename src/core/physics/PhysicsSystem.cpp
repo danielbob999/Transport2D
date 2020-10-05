@@ -32,7 +32,7 @@ void PhysicsSystem::update(double delta) {
 		b2Vec2 screenSize = core_renderer::Camera::getInstance()->getScreenSize();
 		ImGui::SetNextWindowPos(ImVec2(screenSize.x - 205, 5), ImGuiCond_FirstUseEver);
 		ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiCond_FirstUseEver);
-		ImGui::Begin("Physics");
+		ImGui::Begin("Debug::Physics");
 
 		std::stringstream ss;
 		ss << "Gravity: (" << m_world->GetGravity().x << ", " << m_world->GetGravity().y << ")\n";
