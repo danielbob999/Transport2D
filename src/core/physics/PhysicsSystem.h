@@ -1,7 +1,11 @@
 #pragma once
 #include "../coresystem/CoreSystem.h"
+#include "../objectsystem/DrawablePhysicsComponent.h"
 #include "draw.h"
 #include "box2d/box2d.h"
+#include <vector>
+
+using namespace core_objectsystem;
 
 namespace core_physics {
 	class PhysicsSystem : public CoreSystem {
@@ -9,6 +13,7 @@ namespace core_physics {
 		static PhysicsSystem* s_instance;
 		b2World* m_world;
 		DebugDraw* m_debugDrawObject;
+		std::vector<DrawablePhysicsComponent*> m_drawableComponents;
 
 		// Testing
 		b2Body* body;
@@ -23,6 +28,7 @@ namespace core_physics {
 
 		b2World* getWorld();
 		b2Body* getDebugDrawObject();
+		void registerDrawableComponent(DrawablePhysicsComponent*);
 
 		static PhysicsSystem* getInstance();
 	};

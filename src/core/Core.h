@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <Windows.h>
 #include "renderer/GLIncludes.h"
 #include "coresystem/CoreSystem.h"
 #include "console/Console.h"
@@ -10,9 +11,11 @@
 #include "../../includes/imgui/imgui_impl_glfw.h"
 #include "../../includes/imgui/imgui_impl_opengl3.h"
 #include "audio/AudioManager.h"
+#include "physics/PhysicsSystem.h"
 using namespace core_input;
 using namespace core_renderer;
 using namespace core_audio;
+using namespace core_physics;
 class Core {
 private:
 	const int VERSION_MAJOR = 1;
@@ -32,6 +35,7 @@ private:
 	InputSystem* m_inputSystem;
 	RenderSystem* m_renderSystem;
 	AudioManager* m_audioManager;
+	PhysicsSystem* m_physicsSystem;
 
 	// Funtion pointers
 	void (*initFn)();

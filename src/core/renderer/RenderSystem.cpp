@@ -7,9 +7,12 @@
 #include "../console/Console.h"
 #include "../Core.h"
 #include "../objectsystem/RenderComponent.h"
+#include "../physics/PhysicsSystem.h"
+#include "../objectsystem/GroundBodyComponent.h"
 
 using namespace core_renderer;
 using namespace core_objectsystem;
+using namespace core_physics;
 
 RenderSystem* RenderSystem::s_instance = nullptr;
 
@@ -97,8 +100,6 @@ void RenderSystem::render(double delta) {
 	renderComponents();
 
 	renderObjectOrigins();
-
-	renderBox2d();
 }
 
 void RenderSystem::renderComponents() {
@@ -191,30 +192,6 @@ void RenderSystem::renderComponents() {
 	}
 
 	m_itemsRenderedLastFrame = itemsRendered;
-}
-
-void RenderSystem::renderBox2d() {
-	if (m_renderBox2d) {
-		/*
-		glBegin(GL_LINES);
-		glColor3b(0, 255, 0);
-
-		int bodyCount = 1;
-		// int bodyCount = PhysicsSystem::getInstance()::getWorldInstance()->GetBodyCount();
-		b2Body* bodies;
-		// b2Body* bodies = PhysicsSystem::getInstance()::getWorldInstance()->GetBodyList();
-
-		for (int i = 0; i < bodyCount; i++) {
-			//if (i == 1) break;
-			glVertex2f(worldToScreenCoords(b2Vec2(0, 0)).x, worldToScreenCoords(b2Vec2(0, 0)).y);
-			glVertex2f(worldToScreenCoords(b2Vec2(4, 0)).x, worldToScreenCoords(b2Vec2(4, 0)).y);
-		}
-
-		glEnd();
-		*/
-
-		// PhysicsSystem::getInstance()->getWorldInstance()->DebugDraw();
-	}
 }
 
 void RenderSystem::renderObjectOrigins() {

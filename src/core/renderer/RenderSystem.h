@@ -23,7 +23,6 @@ namespace core_renderer {
 
 		// Render functions
 		void renderComponents();
-		void renderBox2d();
 		void renderObjectOrigins();
 	public:
 		RenderSystem();

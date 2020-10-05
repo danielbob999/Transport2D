@@ -38,7 +38,6 @@ void Core::run() {
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-
     /* Create a windowed mode window and its OpenGL context */
     m_window = glfwCreateWindow(1152, 648, "Transport2D", NULL, NULL);
 
@@ -71,6 +70,7 @@ void Core::run() {
      ===================================
     */
     m_inputSystem->start();
+    m_physicsSystem->start();
     m_renderSystem->start();
 	m_audioManager->start();
 
@@ -82,6 +82,8 @@ void Core::run() {
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(m_window) && m_shouldBeLooping) {
+        double frameStartTime = glfwGetTime();
+
         // Start a new GUI frame here. ImGui cal be called from all update functions
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -96,6 +98,7 @@ void Core::run() {
          ===================================
         */
         m_renderSystem->update(m_lastFrameDelta);
+        m_physicsSystem->update(m_lastFrameDelta);
 		m_audioManager->update(m_lastFrameDelta);
         m_inputSystem->update(m_lastFrameDelta); // This must come after every other update
         m_console->update();
@@ -114,6 +117,7 @@ void Core::run() {
         */
         m_inputSystem->render(m_lastFrameDelta);
         m_renderSystem->render(m_lastFrameDelta);
+        m_physicsSystem->render(m_lastFrameDelta);
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -124,8 +128,18 @@ void Core::run() {
         /* Poll for and process events */
         glfwPollEvents();
 
-        m_lastFrameDelta = glfwGetTime() - m_runTime;
+        m_lastFrameDelta = (glfwGetTime() - m_runTime) * 1000; // Get the time difference (in seconds) then convert to milliseconds (x 1000)
         m_runTime = glfwGetTime();
+
+        double totalFrameTimeInMs = (glfwGetTime() - frameStartTime) * 1000;
+        double sleepTime = (1000 / 60.0) - totalFrameTimeInMs;
+        
+        // Reset the sleep back to zero if some calculation weirdness has happened
+        if (sleepTime < 0) {
+            sleepTime = 0;
+        }
+
+        Sleep(sleepTime);
     }
 
     // Call the close function of all ComponentScripts
@@ -140,6 +154,7 @@ void Core::run() {
     m_inputSystem->close();
     m_renderSystem->close();
 	m_audioManager->close();
+    m_physicsSystem->close();
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -192,6 +207,7 @@ void Core::start(void (*iFn)()) {
     getInstance()->m_inputSystem = new InputSystem();
     getInstance()->m_renderSystem = new RenderSystem();
 	getInstance()->m_audioManager = new AudioManager();
+    getInstance()->m_physicsSystem = new PhysicsSystem();
     getInstance()->initFn = iFn;
 
 	getInstance()->m_shouldBeLooping = true;

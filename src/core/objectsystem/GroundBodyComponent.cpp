@@ -1,6 +1,8 @@
 #include "GroundBodyComponent.h"
 #include "../physics/PhysicsSystem.h"
 #include "../console/Console.h"
+#include "../renderer/GLIncludes.h"
+#include "../renderer/RenderSystem.h"
 using namespace core_objectsystem;
 
 GroundBodyComponent::GroundBodyComponent() {
@@ -60,15 +62,31 @@ void GroundBodyComponent::start() {
 	shape.SetTwoSided(b2Vec2(x, 0.0f), b2Vec2(x, 20.0f));
 	m_fixtures.push_back(m_body->CreateFixture(&fd));
 
+	core_physics::PhysicsSystem::getInstance()->registerDrawableComponent(this);
+
 	Console::log("Started GroundBodyComponent");
 }
 
 void GroundBodyComponent::update() {
-
 }
 
 void GroundBodyComponent::close() {
 
+}
+
+void GroundBodyComponent::draw() {
+	glBegin(GL_LINES);
+
+	for (int i = 0; i < m_fixtures.size(); i++) {
+		b2EdgeShape* shape = (b2EdgeShape*)m_fixtures[i]->GetShape();
+		b2Vec2 vert1sc = core_renderer::RenderSystem::worldToScreenCoords(shape->m_vertex1);
+		b2Vec2 vert2sc = core_renderer::RenderSystem::worldToScreenCoords(shape->m_vertex2);
+
+		glVertex2f(vert1sc.x, vert1sc.y);
+		glVertex2f(vert2sc.x, vert2sc.y);
+	}
+
+	glEnd();
 }
 
 b2Body* GroundBodyComponent::getBody() {
