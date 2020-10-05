@@ -75,8 +75,8 @@ void GroundBodyComponent::close() {
 }
 
 void GroundBodyComponent::draw() {
+	glColor3f(1, 0, 0);
 	glBegin(GL_LINES);
-
 	for (int i = 0; i < m_fixtures.size(); i++) {
 		b2EdgeShape* shape = (b2EdgeShape*)m_fixtures[i]->GetShape();
 		b2Vec2 vert1sc = core_renderer::RenderSystem::worldToScreenCoords(shape->m_vertex1);

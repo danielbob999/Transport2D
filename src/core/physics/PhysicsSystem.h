@@ -12,11 +12,9 @@ namespace core_physics {
 	private:
 		static PhysicsSystem* s_instance;
 		b2World* m_world;
-		DebugDraw* m_debugDrawObject;
+		bool m_renderDebug;
+		bool m_showUI;
 		std::vector<DrawablePhysicsComponent*> m_drawableComponents;
-
-		// Testing
-		b2Body* body;
 	public:
 		PhysicsSystem();
 		~PhysicsSystem();
@@ -27,7 +25,10 @@ namespace core_physics {
 		void close() override;
 
 		b2World* getWorld();
-		b2Body* getDebugDrawObject();
+		bool getRenderDebugStatus();
+		void setRenderDebugStatus(bool);
+		bool getUIStatus();
+		void setUIStatus(bool);
 		void registerDrawableComponent(DrawablePhysicsComponent*);
 
 		static PhysicsSystem* getInstance();

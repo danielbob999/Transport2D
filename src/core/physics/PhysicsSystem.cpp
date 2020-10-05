@@ -1,5 +1,6 @@
 #include "PhysicsSystem.h"
 #include "../console/Console.h"
+#include "../renderer/Camera.h"
 #include <sstream>
 #include <iostream>
 using namespace core_physics;
@@ -17,11 +18,9 @@ PhysicsSystem::PhysicsSystem() {
 }
 
 void PhysicsSystem::start() {
-	m_debugDrawObject = new DebugDraw();
-	m_debugDrawObject->Create();
-
 	m_world = new b2World(b2Vec2(0, -9.8));
-	m_world->SetDebugDraw(m_debugDrawObject);
+	m_showUI = true;
+	m_renderDebug = true;
 
 	Console::log("PhysicsSystem (" + Console::ptrToString(this) + ") has successfully started");
 }
@@ -29,16 +28,25 @@ void PhysicsSystem::start() {
 void PhysicsSystem::update(double delta) {
 	m_world->Step((1.0 / 60.0f), 6, 6);
 
-	ImGui::Begin("Physics");
+	if (m_showUI) {
+		b2Vec2 screenSize = core_renderer::Camera::getInstance()->getScreenSize();
+		ImGui::SetNextWindowPos(ImVec2(screenSize.x - 205, 5), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(200, 100), ImGuiCond_FirstUseEver);
+		ImGui::Begin("Physics");
 
-	std::stringstream ss;
-	ss << "Gravity: (" << m_world->GetGravity().x << ", " << m_world->GetGravity().y << ")\n";
-	ss << "Body Count: " << m_world->GetBodyCount() << std::endl;
-	ImGui::Text(ss.str().c_str());
-	ImGui::End();
+		std::stringstream ss;
+		ss << "Gravity: (" << m_world->GetGravity().x << ", " << m_world->GetGravity().y << ")\n";
+		ss << "Body Count: " << m_world->GetBodyCount() << std::endl;
+		ImGui::Text(ss.str().c_str());
+		ImGui::End();
+	}
 }
 
 void PhysicsSystem::render(double delta) {
+	if (!m_renderDebug) {
+		return;
+	}
+
 	for (int i = 0; i < m_drawableComponents.size(); i++) {
 		try {
 			DrawablePhysicsComponent* dpc = m_drawableComponents[i];
@@ -67,12 +75,24 @@ void PhysicsSystem::registerDrawableComponent(DrawablePhysicsComponent* comp) {
 	m_drawableComponents.push_back(comp);
 }
 
-b2World* PhysicsSystem::getWorld() {
-	return m_world;
+void PhysicsSystem::setRenderDebugStatus(bool val) {
+	m_renderDebug = val;
 }
 
-b2Body* PhysicsSystem::getDebugDrawObject() {
-	return body;
+bool PhysicsSystem::getRenderDebugStatus() {
+	return m_renderDebug;
+}
+
+void PhysicsSystem::setUIStatus(bool val) {
+	m_showUI = val;
+}
+
+bool PhysicsSystem::getUIStatus() {
+	return m_showUI;
+}
+
+b2World* PhysicsSystem::getWorld() {
+	return m_world;
 }
 
 PhysicsSystem* PhysicsSystem::getInstance() {
