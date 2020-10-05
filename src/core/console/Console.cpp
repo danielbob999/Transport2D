@@ -24,14 +24,14 @@ void Console::update() {
 		}
 
 		ImGui::SetNextWindowPos(ImVec2(5, 5), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(Camera::getInstance()->getScreenSize().x - 10, 400), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(Camera::getInstance()->getScreenSize().x - 215, 400), ImGuiCond_FirstUseEver);
 		ImGui::Begin("Console");
 
 		ImGui::Text(logStr.c_str());
 		char buffer[1024] = "";
 
 		//ImGui::SetCursorPosY(380);
-		ImGui::SetNextItemWidth(Camera::getInstance()->getScreenSize().x - 10);
+		ImGui::SetNextItemWidth(Camera::getInstance()->getScreenSize().x - 215);
 		if (ImGui::InputText("", buffer, 1024, ImGuiInputTextFlags_EnterReturnsTrue)) {
 			submitCommandCallback(buffer);
 		}
