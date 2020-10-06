@@ -95,7 +95,7 @@ void RenderSystem::render(double delta) {
 	glEnable(GL_TEXTURE);
 	glEnable(GL_BLEND);
 	glEnable(GL_PROGRAM_POINT_SIZE);
-	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
