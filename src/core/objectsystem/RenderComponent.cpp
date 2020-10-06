@@ -99,7 +99,7 @@ b2Vec2 RenderComponent::getVertexWorldPosition(int vertId) {
     }
 
     if (vertId == 2) {
-        b2Vec2 vertPos = b2Vec2(bounds[0] + bounds[2], bounds[1] + bounds[3]);
+        b2Vec2 vertPos = b2Vec2(bounds[0] + bounds[2], bounds[1] - bounds[3]);
 
         float x = parentPos.x + (vertPos.x - parentPos.x) * (float)cos(rotation) + (vertPos.y - parentPos.y) * (float)sin(rotation);
         float y = parentPos.y - (vertPos.x - parentPos.x) * (float)sin(rotation) + (vertPos.y - parentPos.y) * (float)cos(rotation);
@@ -109,7 +109,7 @@ b2Vec2 RenderComponent::getVertexWorldPosition(int vertId) {
     }
 
     if (vertId == 3) {
-        b2Vec2 vertPos = b2Vec2(bounds[0], bounds[1] + bounds[3]);
+        b2Vec2 vertPos = b2Vec2(bounds[0], bounds[1] - bounds[3]);
 
         float x = parentPos.x + (vertPos.x - parentPos.x) * (float)cos(rotation) + (vertPos.y - parentPos.y) * (float)sin(rotation);
         float y = parentPos.y - (vertPos.x - parentPos.x) * (float)sin(rotation) + (vertPos.y - parentPos.y) * (float)cos(rotation);
