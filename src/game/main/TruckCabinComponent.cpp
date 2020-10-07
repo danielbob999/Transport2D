@@ -5,7 +5,10 @@
 #include "../../core/renderer/Camera.h"
 #include "../../core/input/InputSystem.h"
 #include "../../core/input/InputKeyDefs.h"
+#include "../../core/objectsystem/RenderComponent.h"
 #include <iostream>
+
+using namespace core_input;
 
 TruckCabinComponent::TruckCabinComponent() {
 	m_scale = 1;
@@ -51,6 +54,13 @@ void TruckCabinComponent::update() {
 	}*/
 
 	core_renderer::Camera::getInstance()->setPosition(thisObject->getPosition().x, core_renderer::Camera::getInstance()->getPosition().y);
+
+	// Set the wheel object positions
+	Object::getObjectByName("Wheel1")->setPosition(m_wheel1->GetPosition());
+	Object::getObjectByName("Wheel2")->setPosition(m_wheel2->GetPosition());
+	Object::getObjectByName("Wheel3")->setPosition(m_wheel3->GetPosition());
+
+	//((RenderComponent*)Object::getObjectByName("Wheel1")->getComponentScript("RenderComponent"))->setSize((1), (1));
 } 
 
 void TruckCabinComponent::close() {

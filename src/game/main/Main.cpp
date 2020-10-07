@@ -28,8 +28,9 @@ void initTruck() {
 	RenderComponent* cabinRc = new RenderComponent();
 	cabinRc->setColour(1, 1, 1);
 	cabinRc->setShouldRender(true);
-	cabinRc->setSize(4.5, 4.5 * 0.7852);
+	cabinRc->setSize(4.1, 4.1 * 0.7852);
 	cabinRc->setRenderPriority(1000);
+	cabinRc->setOffset(b2Vec2(-0.55, 1.1));
 
 	Texture cabinTex = Texture("res/textures/game/truck/cabin.png");
 	cabinRc->setTexture(cabinTex);
@@ -38,9 +39,39 @@ void initTruck() {
 	obj->addComponentScript(tcc);
 	obj->addComponentScript(cabinRc);
 
-	Object::createObject("Wheel1", 0, 0);
-	Object::createObject("Wheel2", 0, 0);
-	Object::createObject("Wheel3", 0, 0);
+	Object* wheel1 = Object::createObject("Wheel1", 0, 1);
+	Object* wheel2 = Object::createObject("Wheel2", 0, 2);
+	Object* wheel3 = Object::createObject("Wheel3", 0, 3);
+
+	Texture wheelTex = Texture("res/textures/game/truck/tyre.png");
+
+	RenderComponent* w1rc = new RenderComponent();
+	w1rc->setColour(1, 1, 1);
+	w1rc->setSize(1, 1);
+	w1rc->setShouldRender(true);
+	w1rc->setRenderPriority(2000);
+	w1rc->setTexture(wheelTex);
+	w1rc->setOffset(b2Vec2(0, 0));
+
+	RenderComponent* w2rc = new RenderComponent();
+	w2rc->setColour(1, 1, 1);
+	w2rc->setSize(1, 1);
+	w2rc->setShouldRender(true);
+	w2rc->setRenderPriority(2000);
+	w2rc->setTexture(wheelTex);
+	w2rc->setOffset(b2Vec2(0, 0));
+
+	RenderComponent* w3rc = new RenderComponent();
+	w3rc->setColour(1, 1, 1);
+	w3rc->setSize(1, 1);
+	w3rc->setShouldRender(true);
+	w3rc->setRenderPriority(2000);
+	w3rc->setTexture(wheelTex);
+	w3rc->setOffset(b2Vec2(0, 0));
+
+	wheel1->addComponentScript(w1rc);
+	wheel2->addComponentScript(w2rc);
+	wheel3->addComponentScript(w3rc);
 }
 
 void init() {
