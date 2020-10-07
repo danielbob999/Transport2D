@@ -108,10 +108,11 @@ void RenderSystem::render(double delta) {
 		renderComponents();
 	}
 
-	renderObjectOrigins();
-
 	// We need to disable blend so that the box2d rendering shows up
 	glDisable(GL_BLEND);
+
+	renderObjectOrigins();
+
 }
 
 void RenderSystem::renderComponents() {
@@ -339,6 +340,14 @@ b2Vec2 RenderSystem::worldToScreenCoords(b2Vec2 worldPos) {
 	screenCoords.y = ((worldPos.y - cameraPos.y) / (Camera::getInstance()->getScreenSize().y / 2)) * Camera::getInstance()->getZoomFactor();
 
 	return screenCoords;
+}
+
+b2Vec2 RenderSystem::applyRotationScaleToPoint(b2Vec2 point, b2Vec2 origin, float rotationInRad, float scale) {
+	float x = origin.x + (point.x - origin.x) * (float)cos(rotationInRad) + (point.y - origin.y) * (float)sin(rotationInRad);
+	float y = origin.y - (point.x - origin.x) * (float)sin(rotationInRad) + (point.y - origin.y) * (float)cos(rotationInRad);
+
+	//return b2Vec2(x / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0), y / (Camera::getInstance()->getDefaultDisplayAreaHeight() / 2.0));
+	return b2Vec2(x * scale, y * scale);
 }
 
 RenderSystem* RenderSystem::getInstance() {

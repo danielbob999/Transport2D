@@ -12,7 +12,7 @@ Console::Console() {
 	}
 
 	s_instance = this;
-	m_showUI = true;
+	m_showUI = false;
 }
 
 void Console::update() {

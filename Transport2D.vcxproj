@@ -170,6 +170,7 @@
     <ClCompile Include="src\core\renderer\Texture.cpp" />
     <ClCompile Include="src\game\main\Main.cpp" />
     <ClCompile Include="src\game\main\TestCompScript.cpp" />
+    <ClCompile Include="src\game\main\TruckCabinComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\imgui\imconfig.h" />
@@ -202,6 +203,7 @@
     <ClInclude Include="src\core\renderer\RenderSystem.h" />
     <ClInclude Include="src\core\renderer\Texture.h" />
     <ClInclude Include="src\game\main\TestCompScript.h" />
+    <ClInclude Include="src\game\main\TruckCabinComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

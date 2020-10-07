@@ -7,8 +7,11 @@
 namespace core_objectsystem {
 	class GroundBodyComponent : public DrawablePhysicsComponent {
 	private:
-		std::vector<b2Fixture*> m_fixtures;
-		b2Body* m_body;
+		std::vector<b2Fixture*> m_ground1Fixtures;
+		std::vector<b2Fixture*> m_ground2Fixtures;
+		b2Body* m_ground1Body;
+		b2Body* m_ground2Body;
+		int m_groundMode; // 1 if ground1 is active , 2 if ground2 is active
 	public:
 		GroundBodyComponent();
 		~GroundBodyComponent();
@@ -18,9 +21,7 @@ namespace core_objectsystem {
 		void close() override;
 
 		void draw() override;
-
-		b2Body* getBody();
-		std::vector<b2Fixture*>& getFixtures();
+		void generate() override;
 
 		std::string getTypeString() override;
 	};

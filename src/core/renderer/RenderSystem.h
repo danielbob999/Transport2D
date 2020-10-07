@@ -38,6 +38,7 @@ namespace core_renderer {
 		void setOriginRenderStatus(bool);
 		bool getOriginRenderStatus();
 		static b2Vec2 worldToScreenCoords(b2Vec2);
+		static b2Vec2 applyRotationScaleToPoint(b2Vec2, b2Vec2, float, float);
 		bool getUIStatus();
 		void setUIStatus(bool);
 		bool getRenderStatus();
