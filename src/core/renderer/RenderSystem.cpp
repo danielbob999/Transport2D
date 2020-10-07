@@ -32,7 +32,7 @@ void RenderSystem::start() {
 	int width, height;
 	glfwGetWindowSize(Core::getWindow(), &width, &height);
 	m_camera = new Camera(width, height);
-	m_camera->setZoomFactor(15);
+	m_camera->setZoomFactor(19);
 
 	m_showUI = true;
 	m_renderObjectOrigins = true;
@@ -89,6 +89,9 @@ void RenderSystem::update(double delta) {
 		s += std::to_string(fps);
 		ImGui::Text(s.c_str());
 		ImGui::Checkbox("Render Components", &m_shouldRender);
+		float tempZoom = Camera::getInstance()->getZoomFactor();
+		ImGui::SliderFloat("Camera Zoom", &tempZoom, 0.1, 100);
+		Camera::getInstance()->setZoomFactor(tempZoom);
 		ImGui::End();
 	}
 }
