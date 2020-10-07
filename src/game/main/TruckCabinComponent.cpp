@@ -25,19 +25,30 @@ void TruckCabinComponent::update() {
 	thisObject->setPosition(m_truck->GetPosition());
 	thisObject->setRotation(-m_truck->GetAngle());
 
-	std::cout << "ObjectPos: (" << thisObject->getPosition().x << ", " << thisObject->getPosition().y << ")" << std::endl;
+	//std::cout << "ObjectPos: (" << thisObject->getPosition().x << ", " << thisObject->getPosition().y << ")" << std::endl;
 	
 	b2Vec2 pos = core_renderer::Camera::getInstance()->getPosition();
 	//core_renderer::Camera::getInstance()->setPosition();
 
 	if (core_input::InputSystem::isKeyHeld(KEYBOARD_KEY_D)) {
-		m_spring1->SetMotorSpeed(-100);
-		m_spring2->SetMotorSpeed(-100);
-		std::cout << "Truck going right" << std::endl;
+		m_spring1->EnableMotor(true);
+		m_spring2->EnableMotor(true);
+		m_spring1->SetMotorSpeed(-40);
+		m_spring2->SetMotorSpeed(-40);
+		//std::cout << "Truck going right" << std::endl;
+	}
+	else if (core_input::InputSystem::isKeyHeld(KEYBOARD_KEY_A)){
+		m_spring1->EnableMotor(true);
+		m_spring2->EnableMotor(true);
+		m_spring1->SetMotorSpeed(40);
+		m_spring2->SetMotorSpeed(40);
 	}
 	else {
-		m_spring1->SetMotorSpeed(0);
-		m_spring2->SetMotorSpeed(0);
+		m_spring1->SetMotorSpeed(-0.001);
+		m_spring2->SetMotorSpeed(-0.001);
+
+		m_spring1->EnableMotor(false);
+		m_spring2->EnableMotor(false);
 	}
 
 	/*
@@ -53,12 +64,15 @@ void TruckCabinComponent::update() {
 		std::cout << "Truck stopping" << std::endl;
 	}*/
 
-	core_renderer::Camera::getInstance()->setPosition(thisObject->getPosition().x, core_renderer::Camera::getInstance()->getPosition().y);
+	core_renderer::Camera::getInstance()->setPosition(thisObject->getPosition().x, thisObject->getPosition().y + 5);
 
 	// Set the wheel object positions
 	Object::getObjectByName("Wheel1")->setPosition(m_wheel1->GetPosition());
+	Object::getObjectByName("Wheel1")->setRotation(-m_wheel1->GetAngle());
 	Object::getObjectByName("Wheel2")->setPosition(m_wheel2->GetPosition());
+	Object::getObjectByName("Wheel2")->setRotation(-m_wheel1->GetAngle());
 	Object::getObjectByName("Wheel3")->setPosition(m_wheel3->GetPosition());
+	Object::getObjectByName("Wheel3")->setRotation(-m_wheel1->GetAngle());
 
 	//((RenderComponent*)Object::getObjectByName("Wheel1")->getComponentScript("RenderComponent"))->setSize((1), (1));
 } 
@@ -118,100 +132,6 @@ void TruckCabinComponent::draw() {
 }
 
 void TruckCabinComponent::generate() {
-	/*
-	b2PolygonShape chassis;
-	b2Vec2 vertices[8];
-	b2Vec2 bodyOffset = getBodyOffset();
-
-	vertices[0].Set((-2.8f * m_scale) + bodyOffset.x, (-0.5f * m_scale) + bodyOffset.y);
-	vertices[1].Set((1.5f * m_scale) + bodyOffset.x, (-0.5f * m_scale) + bodyOffset.y);
-	vertices[2].Set((1.5f * m_scale) + bodyOffset.x, (0.2f * m_scale) + bodyOffset.y);
-	vertices[3].Set((-2.8f * m_scale) + bodyOffset.x, (0.2f * m_scale) + bodyOffset.y);
-	chassis.Set(vertices, 4);
-
-	b2PolygonShape cabin;
-	vertices[0].Set((-1.0f * m_scale) + bodyOffset.x, (0.2f * m_scale) + bodyOffset.y);
-	vertices[1].Set((1.5f * m_scale) + bodyOffset.x, (0.2f * m_scale) + bodyOffset.y);
-	vertices[2].Set((1.5f * m_scale) + bodyOffset.x, (2.0f * m_scale) + bodyOffset.y);
-	vertices[3].Set((-1.0f * m_scale) + bodyOffset.x, (2.0f * m_scale) + bodyOffset.y);
-	cabin.Set(vertices, 4);
-
-	b2BodyDef bd;
-	bd.type = b2_dynamicBody;
-	b2Vec2 objectPos = Object::getObjectById(getParentId())->getPosition();
-	bd.position.Set(objectPos.x + getBodyOffset().x, objectPos.y + getBodyOffset().y);
-	m_cabinBody = core_physics::PhysicsSystem::getInstance()->getWorld()->CreateBody(&bd);
-	m_cabinFixtures.push_back(m_cabinBody->CreateFixture(&chassis, 1.0f));
-	m_cabinFixtures.push_back(m_cabinBody->CreateFixture(&cabin, 1.0f));
-
-	// ======================
-	//   Setting the wheels
-	b2CircleShape circle;
-	circle.m_radius = (0.5f);
-
-	
-
-	b2FixtureDef fd;
-	fd.shape = &circle;
-	fd.density = 1.0f;
-	fd.friction = 0.9f;
-
-	bd.position.Set((-1.0f), (0.3));
-	m_wheels[0] = core_physics::PhysicsSystem::getInstance()->getWorld()->CreateBody(&bd);
-	m_wheelFixtures[0] = m_wheels[0]->CreateFixture(&fd);
-
-	bd.position.Set((-2.0f), (0.3));
-	m_wheels[1] = core_physics::PhysicsSystem::getInstance()->getWorld()->CreateBody(&bd);
-	m_wheelFixtures[1] = m_wheels[1]->CreateFixture(&fd);
-
-	bd.position.Set((0.8f), (0.3));
-	m_wheels[2] = core_physics::PhysicsSystem::getInstance()->getWorld()->CreateBody(&bd);
-	m_wheelFixtures[2] = m_wheels[2]->CreateFixture(&fd);
-
-	b2WheelJointDef jd;
-	b2Vec2 axis(0.0f, 1.0f);
-
-	float mass1 = m_wheels[0]->GetMass();
-	float mass2 = m_wheels[1]->GetMass();
-	float mass3 = m_wheels[2]->GetMass();
-
-	float hertz = 4.0f;
-	float dampingRatio = 0.7f;
-	float omega = 2.0f * b2_pi * hertz;
-
-	jd.Initialize(m_cabinBody, m_wheels[0], m_wheels[0]->GetPosition(), axis);
-	jd.motorSpeed = 0.0f;
-	jd.maxMotorTorque = 20.0f;
-	jd.enableMotor = true;
-	jd.stiffness = mass1 * omega * omega;
-	jd.damping = 2.0f * mass1 * dampingRatio * omega;
-	jd.lowerTranslation = -0.25f;
-	jd.upperTranslation = 0.25f;
-	jd.enableLimit = true;
-	m_wheelJointSprings[0] = (b2WheelJoint*)core_physics::PhysicsSystem::getInstance()->getWorld()->CreateJoint(&jd);
-
-	jd.Initialize(m_cabinBody, m_wheels[1], m_wheels[1]->GetPosition(), axis);
-	jd.motorSpeed = 0.0f;
-	jd.maxMotorTorque = 20.0f;
-	jd.enableMotor = true;
-	jd.stiffness = mass2 * omega * omega;
-	jd.damping = 2.0f * mass2 * dampingRatio * omega;
-	jd.lowerTranslation = -0.25f;
-	jd.upperTranslation = 0.25f;
-	jd.enableLimit = true;
-	m_wheelJointSprings[1] = (b2WheelJoint*)core_physics::PhysicsSystem::getInstance()->getWorld()->CreateJoint(&jd);
-
-	jd.Initialize(m_cabinBody, m_wheels[2], m_wheels[2]->GetPosition(), axis);
-	jd.motorSpeed = 0.0f;
-	jd.maxMotorTorque = 10.0f;
-	jd.enableMotor = false;
-	jd.stiffness = mass3 * omega * omega;
-	jd.damping = 2.0f * mass3 * dampingRatio * omega;
-	jd.lowerTranslation = -0.25f;
-	jd.upperTranslation = 0.25f;
-	jd.enableLimit = true;
-	m_wheelJointSprings[2] = (b2WheelJoint*)core_physics::PhysicsSystem::getInstance()->getWorld()->CreateJoint(&jd);
-	*/
 	b2PolygonShape chassis;
 	b2Vec2 vertices[8];
 	vertices[0].Set(-2.5f, -0.5f);
@@ -263,9 +183,9 @@ void TruckCabinComponent::generate() {
 	b2WheelJointDef jd;
 	b2Vec2 axis(0.0f, 1.0f);
 
-	float mass1 = m_wheel1->GetMass();
-	float mass2 = m_wheel2->GetMass();
-	float mass3 = m_wheel3->GetMass();
+	float mass1 = m_wheel1->GetMass() / 1.5f;
+	float mass2 = m_wheel2->GetMass() / 1.5f ;
+	float mass3 = m_wheel3->GetMass() / 1.5f;
 
 	float hertz = 4.0f;
 	float dampingRatio = 1.0f;
@@ -273,7 +193,7 @@ void TruckCabinComponent::generate() {
 
 	jd.Initialize(m_truck, m_wheel1, m_wheel1->GetPosition(), axis);
 	jd.motorSpeed = 0.0f;
-	jd.maxMotorTorque = 20.0f;
+	jd.maxMotorTorque = 5.0f; // 20
 	jd.enableMotor = true;
 	jd.stiffness = mass1 * omega * omega;
 	jd.damping = 2.0f * mass1 * dampingRatio * omega;
@@ -284,7 +204,7 @@ void TruckCabinComponent::generate() {
 
 	jd.Initialize(m_truck, m_wheel2, m_wheel2->GetPosition(), axis);
 	jd.motorSpeed = 0.0f;
-	jd.maxMotorTorque = 20.0f;
+	jd.maxMotorTorque = 5.0f; // 20
 	jd.enableMotor = true;
 	jd.stiffness = mass2 * omega * omega;
 	jd.damping = 2.0f * mass2 * dampingRatio * omega;
@@ -295,7 +215,7 @@ void TruckCabinComponent::generate() {
 
 	jd.Initialize(m_truck, m_wheel3, m_wheel3->GetPosition(), axis);
 	jd.motorSpeed = 0.0f;
-	jd.maxMotorTorque = 10.0f;
+	jd.maxMotorTorque = 2.0f; // 10
 	jd.enableMotor = false;
 	jd.stiffness = mass3 * omega * omega;
 	jd.damping = 2.0f * mass3 * dampingRatio * omega;
