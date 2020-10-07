@@ -17,6 +17,7 @@ namespace core_renderer {
 		int m_itemsRenderedLastFrame;
 		bool m_renderObjectOrigins;
 		bool m_showUI;
+		bool m_shouldRender;
 
 		GLint compileAndLinkShader(const char*, const char*);
 		std::string getShaderInfoMsg(const GLuint);
@@ -39,6 +40,8 @@ namespace core_renderer {
 		static b2Vec2 worldToScreenCoords(b2Vec2);
 		bool getUIStatus();
 		void setUIStatus(bool);
+		bool getRenderStatus();
+		void setRenderStatus(bool);
 
 		static RenderSystem* getInstance();
 		static Texture& getDefaultTexture();

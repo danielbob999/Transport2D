@@ -22,6 +22,7 @@ RenderSystem::RenderSystem() {
 	}
 
 	s_instance = this;
+	m_shouldRender = true;
 
 	Console::log("RenderSystem (" + Console::ptrToString(s_instance) + ") has been initialised");
 }
@@ -87,6 +88,7 @@ void RenderSystem::update(double delta) {
 		int fps = 1000 / delta;
 		s += std::to_string(fps);
 		ImGui::Text(s.c_str());
+		ImGui::Checkbox("Render Components", &m_shouldRender);
 		ImGui::End();
 	}
 }
@@ -102,9 +104,14 @@ void RenderSystem::render(double delta) {
 	glEnableClientState(GL_INDEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	renderComponents();
+	if (m_shouldRender) {
+		renderComponents();
+	}
 
 	renderObjectOrigins();
+
+	// We need to disable blend so that the box2d rendering shows up
+	glDisable(GL_BLEND);
 }
 
 void RenderSystem::renderComponents() {
@@ -314,6 +321,14 @@ std::string RenderSystem::getShaderInfoMsg(const GLuint shaderId) {
 
 int RenderSystem::getRenderCountLastFrame() {
 	return m_itemsRenderedLastFrame;
+}
+
+void RenderSystem::setRenderStatus(bool val) {
+	m_shouldRender = val;
+}
+
+bool RenderSystem::getRenderStatus() {
+	return m_shouldRender;
 }
 
 b2Vec2 RenderSystem::worldToScreenCoords(b2Vec2 worldPos) {
