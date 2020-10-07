@@ -25,6 +25,10 @@ void TruckCabinComponent::update() {
 	thisObject->setPosition(m_truck->GetPosition());
 	thisObject->setRotation(-m_truck->GetAngle());
 
+	Object* trailerObject = Object::getObjectByName("TrailerObject");
+	trailerObject->setPosition(m_trailer->GetPosition());
+	trailerObject->setRotation(-m_trailer->GetAngle());
+
 	//std::cout << "ObjectPos: (" << thisObject->getPosition().x << ", " << thisObject->getPosition().y << ")" << std::endl;
 	
 	b2Vec2 pos = core_renderer::Camera::getInstance()->getPosition();
@@ -73,6 +77,11 @@ void TruckCabinComponent::update() {
 	Object::getObjectByName("Wheel2")->setRotation(-m_wheel1->GetAngle());
 	Object::getObjectByName("Wheel3")->setPosition(m_wheel3->GetPosition());
 	Object::getObjectByName("Wheel3")->setRotation(-m_wheel1->GetAngle());
+
+	Object::getObjectByName("Wheel4")->setPosition(m_trailerWheel1->GetPosition());
+	Object::getObjectByName("Wheel4")->setRotation(-m_trailerWheel1->GetAngle());
+	Object::getObjectByName("Wheel5")->setPosition(m_trailerWheel2->GetPosition());
+	Object::getObjectByName("Wheel5")->setRotation(-m_trailerWheel2->GetAngle());
 
 	//((RenderComponent*)Object::getObjectByName("Wheel1")->getComponentScript("RenderComponent"))->setSize((1), (1));
 } 
@@ -223,6 +232,86 @@ void TruckCabinComponent::generate() {
 	jd.upperTranslation = 0.25f;
 	jd.enableLimit = true;
 	m_spring3 = (b2WheelJoint*)core_physics::PhysicsSystem::getInstance()->getWorld()->CreateJoint(&jd);
+
+	//Trailer
+	{
+		b2PolygonShape box;
+		b2Vec2 vertices[8];
+		vertices[0].Set(-9.0, 2.3f);
+		vertices[1].Set(-1.7f, 2.3f);
+		vertices[2].Set(-1.7f, 0.2f);
+		vertices[3].Set(-9.0f, 0.2f);
+		box.Set(vertices, 4);
+
+
+		b2PolygonShape axle;
+		vertices[0].Set(-8.5, 0.2f);
+		vertices[1].Set(-6.0f, 0.2f);
+		vertices[2].Set(-6.0f, -0.5f);
+		vertices[3].Set(-8.5f, -0.5f);
+		axle.Set(vertices, 4);
+
+		b2CircleShape circle;
+		circle.m_radius = 0.5f;
+
+		b2BodyDef bd;
+		bd.type = b2_dynamicBody;
+		bd.position.Set(0.0f, 1.0f);
+		m_trailer = core_physics::PhysicsSystem::getInstance()->getWorld()->CreateBody(&bd);
+		m_trailer->CreateFixture(&box, 1.0f);
+		m_trailer->CreateFixture(&axle, 1.0f);
+
+		b2RevoluteJointDef rjd;
+		b2Vec2 anchor(-1.7f, 0.25f);
+		rjd.Initialize(m_truck, m_trailer, anchor);
+		core_physics::PhysicsSystem::getInstance()->getWorld()->CreateJoint(&rjd);
+
+
+		b2FixtureDef fd;
+		fd.shape = &circle;
+		fd.density = 1.0f;
+		fd.friction = 0.9f;
+
+		bd.position.Set(-6.5f, 0.35f);
+		m_trailerWheel1 = core_physics::PhysicsSystem::getInstance()->getWorld()->CreateBody(&bd);
+		m_trailerWheel1->CreateFixture(&fd);
+
+		bd.position.Set(-8.0f, 0.35f);
+		m_trailerWheel2 = core_physics::PhysicsSystem::getInstance()->getWorld()->CreateBody(&bd);
+		m_trailerWheel2->CreateFixture(&fd);
+
+		b2WheelJointDef jd;
+		b2Vec2 axis(0.0f, 1.0f);
+
+		float mass2 = m_trailerWheel1->GetMass();
+		float mass3 = m_trailerWheel2->GetMass();
+
+		float hertz = 4.0f;
+		float dampingRatio = 0.7f;
+		float omega = 2.0f * b2_pi * hertz;
+
+		jd.Initialize(m_trailer, m_trailerWheel1, m_trailerWheel1->GetPosition(), axis);
+		jd.motorSpeed = 0.0f;
+		jd.maxMotorTorque = 20.0f;
+		jd.enableMotor = false;
+		jd.stiffness = mass2 * omega * omega;
+		jd.damping = 2.0f * mass2 * dampingRatio * omega;
+		jd.lowerTranslation = -0.25f;
+		jd.upperTranslation = 0.25f;
+		jd.enableLimit = true;
+		m_trailerSpring1 = (b2WheelJoint*)core_physics::PhysicsSystem::getInstance()->getWorld()->CreateJoint(&jd);
+
+		jd.Initialize(m_trailer, m_trailerWheel2, m_trailerWheel2->GetPosition(), axis);
+		jd.motorSpeed = 0.0f;
+		jd.maxMotorTorque = 10.0f;
+		jd.enableMotor = false;
+		jd.stiffness = mass3 * omega * omega;
+		jd.damping = 2.0f * mass3 * dampingRatio * omega;
+		jd.lowerTranslation = -0.25f;
+		jd.upperTranslation = 0.25f;
+		jd.enableLimit = true;
+		m_trailerSpring2 = (b2WheelJoint*)core_physics::PhysicsSystem::getInstance()->getWorld()->CreateJoint(&jd);
+	}
 }
 
 std::string TruckCabinComponent::getTypeString() {

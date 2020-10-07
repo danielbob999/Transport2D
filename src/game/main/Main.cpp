@@ -72,6 +72,42 @@ void initTruck() {
 	wheel1->addComponentScript(w1rc);
 	wheel2->addComponentScript(w2rc);
 	wheel3->addComponentScript(w3rc);
+
+	Object* trailerWheel1 = Object::createObject("Wheel4", 0, 0);
+	Object* trailerWheel2 = Object::createObject("Wheel5", 0, 0);
+
+	RenderComponent* tw1rc = new RenderComponent();
+	tw1rc->setColour(1, 1, 1);
+	tw1rc->setSize(1, 1);
+	tw1rc->setShouldRender(true);
+	tw1rc->setRenderPriority(2000);
+	tw1rc->setTexture(wheelTex);
+	tw1rc->setOffset(b2Vec2(0, 0));
+
+	RenderComponent* tw2rc = new RenderComponent();
+	tw2rc->setColour(1, 1, 1);
+	tw2rc->setSize(1, 1);
+	tw2rc->setShouldRender(true);
+	tw2rc->setRenderPriority(2000);
+	tw2rc->setTexture(wheelTex);
+	tw2rc->setOffset(b2Vec2(0, 0));
+
+	trailerWheel1->addComponentScript(tw1rc);
+	trailerWheel2->addComponentScript(tw2rc);
+
+	Object* trailerObject = Object::createObject("TrailerObject", 0, 0);
+
+	Texture trailerTex = Texture("res/textures/game/truck/trailer.png");
+
+	RenderComponent* trailerRc = new RenderComponent();
+	trailerRc->setColour(1, 1, 1);
+	trailerRc->setShouldRender(true);
+	trailerRc->setSize(7.5, 7.5 * 0.3843);
+	trailerRc->setRenderPriority(1000);
+	trailerRc->setOffset(b2Vec2(-5.35, 1));
+	trailerRc->setTexture(trailerTex);
+
+	trailerObject->addComponentScript(trailerRc);
 }
 
 void init() {
