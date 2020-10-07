@@ -32,7 +32,7 @@ void RenderSystem::start() {
 	int width, height;
 	glfwGetWindowSize(Core::getWindow(), &width, &height);
 	m_camera = new Camera(width, height);
-	m_camera->setZoomFactor(19);
+	m_camera->setZoomFactor(24);
 
 	m_showUI = true;
 	m_renderObjectOrigins = true;

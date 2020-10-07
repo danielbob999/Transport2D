@@ -43,7 +43,7 @@ void initTruck() {
 	Object* wheel2 = Object::createObject("Wheel2", 0, 2);
 	Object* wheel3 = Object::createObject("Wheel3", 0, 3);
 
-	Texture wheelTex = Texture("res/textures/game/truck/tyre.png");
+	Texture wheelTex = Texture("res/textures/game/truck/mudTyre.png");
 
 	RenderComponent* w1rc = new RenderComponent();
 	w1rc->setColour(1, 1, 1);
