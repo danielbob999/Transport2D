@@ -202,7 +202,7 @@ void TruckCabinComponent::generate() {
 
 	jd.Initialize(m_truck, m_wheel1, m_wheel1->GetPosition(), axis);
 	jd.motorSpeed = 0.0f;
-	jd.maxMotorTorque = 5.0f; // 20
+	jd.maxMotorTorque = 20.0f; // 20
 	jd.enableMotor = true;
 	jd.stiffness = mass1 * omega * omega;
 	jd.damping = 2.0f * mass1 * dampingRatio * omega;
@@ -213,7 +213,7 @@ void TruckCabinComponent::generate() {
 
 	jd.Initialize(m_truck, m_wheel2, m_wheel2->GetPosition(), axis);
 	jd.motorSpeed = 0.0f;
-	jd.maxMotorTorque = 5.0f; // 20
+	jd.maxMotorTorque = 20.0f; // 20
 	jd.enableMotor = true;
 	jd.stiffness = mass2 * omega * omega;
 	jd.damping = 2.0f * mass2 * dampingRatio * omega;
@@ -224,7 +224,7 @@ void TruckCabinComponent::generate() {
 
 	jd.Initialize(m_truck, m_wheel3, m_wheel3->GetPosition(), axis);
 	jd.motorSpeed = 0.0f;
-	jd.maxMotorTorque = 2.0f; // 10
+	jd.maxMotorTorque = 10.0f; // 10
 	jd.enableMotor = false;
 	jd.stiffness = mass3 * omega * omega;
 	jd.damping = 2.0f * mass3 * dampingRatio * omega;
@@ -262,6 +262,9 @@ void TruckCabinComponent::generate() {
 		m_trailer->CreateFixture(&axle, 1.0f);
 
 		b2RevoluteJointDef rjd;
+		rjd.lowerAngle = -0.2f;
+		rjd.upperAngle = 0.2f;
+		rjd.enableLimit = true;
 		b2Vec2 anchor(-1.7f, 0.25f);
 		rjd.Initialize(m_truck, m_trailer, anchor);
 		core_physics::PhysicsSystem::getInstance()->getWorld()->CreateJoint(&rjd);
