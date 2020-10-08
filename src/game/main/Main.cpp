@@ -13,12 +13,35 @@
 using namespace core_audio;
 using namespace core_objectsystem;
 
+RenderComponent* generateRenderComponent(b2Vec2 size, b2Vec2 offset, bool shouldRender, float r, float g, float b, int priority, Texture tex) {
+	RenderComponent* rendComp = new RenderComponent();
+	rendComp->setSize(size.x, size.y);
+	rendComp->setOffset(offset);
+	rendComp->setShouldRender(shouldRender);
+	rendComp->setColour(r, b, g);
+	rendComp->setRenderPriority(priority);
+	rendComp->setTexture(tex);
+	return rendComp;
+}
+
 void initTerrain() {
 	GroundBodyComponent* gbc = new GroundBodyComponent();
 	gbc->setBodyOffset(b2Vec2(0, 0));
 
 	Object* obj = Object::createObject("GroundObject", 0, 0);
 	obj->addComponentScript(gbc);
+
+	float totalWidth = 635;
+	b2Vec2 offset = b2Vec2(-20, 0);
+
+	Object* skyObj = Object::createObject("SkyObject", (totalWidth / 2) + offset.x, 10);
+	RenderComponent* skyRend = generateRenderComponent(b2Vec2(totalWidth + 500, 40), b2Vec2(0, 0), true, 1, 1, 1, 500, Texture("res/textures/game/world/lowres/mapSky.png"));
+	skyObj->addComponentScript(skyRend);
+
+	
+	Object* groundObj = Object::createObject("GroundRenderObject", (totalWidth / 2) - 6, 7.5);
+	RenderComponent* grndRend = generateRenderComponent(b2Vec2((totalWidth + 115), (totalWidth + 115) * 0.1581), b2Vec2(0, 0), true, 1, 1, 1, 800, Texture("res/textures/game/world/lowres/mapGround.png"));
+	groundObj->addComponentScript(grndRend);
 }
 
 void initTruck() {

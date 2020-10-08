@@ -139,7 +139,7 @@ void Core::run() {
             sleepTime = 0;
         }
 
-        Sleep(sleepTime);
+        //Sleep(sleepTime);
     }
 
     // Call the close function of all ComponentScripts
