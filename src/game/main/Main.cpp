@@ -39,8 +39,8 @@ void initTerrain() {
 	skyObj->addComponentScript(skyRend);
 
 	
-	Object* groundObj = Object::createObject("GroundRenderObject", (totalWidth / 2) - 6, 7.5);
-	RenderComponent* grndRend = generateRenderComponent(b2Vec2((totalWidth + 115), (totalWidth + 115) * 0.1581), b2Vec2(0, 0), true, 1, 1, 1, 800, Texture("res/textures/game/world/lowres/mapGround.png"));
+	Object* groundObj = Object::createObject("GroundRenderObject", (totalWidth / 2) - 7.5, 7.2);
+	RenderComponent* grndRend = generateRenderComponent(b2Vec2((totalWidth + 113), (totalWidth + 115) * 0.1581), b2Vec2(0, 0), true, 1, 1, 1, 800, Texture("res/textures/game/world/lowres/mapGround.png"));
 	groundObj->addComponentScript(grndRend);
 }
 

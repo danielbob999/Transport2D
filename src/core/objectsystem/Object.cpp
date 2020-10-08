@@ -60,7 +60,7 @@ Object* Object::createObject() {
 	return createObject("NULL", 0, 0);
 }
 
-Object* Object::createObject(const std::string& name, int x, int y) {
+Object* Object::createObject(const std::string& name, float x, float y) {
 	std::string fName = name;
 	int fId = s_nextId; // Set the Objects id to the next available id
 
