@@ -68,15 +68,15 @@ void TruckCabinComponent::update() {
 		std::cout << "Truck stopping" << std::endl;
 	}*/
 
-
+	/*
 	if (core_input::InputSystem::isKeyHeld(KEYBOARD_KEY_P)) {
 		Camera::getInstance()->setPosition(Camera::getInstance()->getPosition().x + 1.5f, Camera::getInstance()->getPosition().y);
 	}
 	else if (core_input::InputSystem::isKeyHeld(KEYBOARD_KEY_O)) {
 		Camera::getInstance()->setPosition(Camera::getInstance()->getPosition().x - 1.5f, Camera::getInstance()->getPosition().y);
-	}
+	}*/
 
-	//core_renderer::Camera::getInstance()->setPosition(thisObject->getPosition().x, thisObject->getPosition().y + 5);
+	core_renderer::Camera::getInstance()->setPosition(thisObject->getPosition().x, thisObject->getPosition().y + 6.5);
 
 	// Set the wheel object positions
 	Object::getObjectByName("Wheel1")->setPosition(m_wheel1->GetPosition());

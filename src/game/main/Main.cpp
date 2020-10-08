@@ -34,14 +34,25 @@ void initTerrain() {
 	float totalWidth = 635;
 	b2Vec2 offset = b2Vec2(-20, 0);
 
-	Object* skyObj = Object::createObject("SkyObject", (totalWidth / 2) + offset.x, 10);
-	RenderComponent* skyRend = generateRenderComponent(b2Vec2(totalWidth + 500, 40), b2Vec2(0, 0), true, 1, 1, 1, 500, Texture("res/textures/game/world/lowres/mapSky.png"));
+	Object* skyObj = Object::createObject("SkyObject", (totalWidth / 2) + offset.x, 25);
+	RenderComponent* skyRend = generateRenderComponent(b2Vec2(totalWidth + 500, 60), b2Vec2(0, 0), true, 1, 1, 1, 500, Texture("res/textures/game/world/lowres/mapSky.png"));
 	skyObj->addComponentScript(skyRend);
-
 	
 	Object* groundObj = Object::createObject("GroundRenderObject", (totalWidth / 2) - 7.5, 7.2);
 	RenderComponent* grndRend = generateRenderComponent(b2Vec2((totalWidth + 113), (totalWidth + 115) * 0.1581), b2Vec2(0, 0), true, 1, 1, 1, 800, Texture("res/textures/game/world/lowres/mapGround.png"));
 	groundObj->addComponentScript(grndRend);
+
+	Object* cloudsObj = Object::createObject("CloudsObject", (totalWidth / 2) - 7.5, 3);
+	RenderComponent* cldRnd = generateRenderComponent(b2Vec2((totalWidth + 113), (totalWidth + 115) * 0.1581), b2Vec2(0, 0), true, 1, 1, 1, 600, Texture("res/textures/game/world/lowres/mapClouds.png"));
+	cloudsObj->addComponentScript(cldRnd);
+
+	Object* grndbckObject = Object::createObject("GroundBackgroundObject", (totalWidth / 2) - 7.5, 7.2);
+	RenderComponent* grndbkRend = generateRenderComponent(b2Vec2((totalWidth + 113), (totalWidth + 115) * 0.1581), b2Vec2(0, 0), true, 1, 1, 1, 700, Texture("res/textures/game/world/lowres/mapBackground.png"));
+	grndbckObject->addComponentScript(grndbkRend);
+
+	Object* grndfreObject = Object::createObject("GroundForegroundObject", (totalWidth / 2) - 7.5, 7.2);
+	RenderComponent* grndfreRend = generateRenderComponent(b2Vec2((totalWidth + 113), (totalWidth + 115) * 0.1581), b2Vec2(0, 0), true, 1, 1, 1, 3000, Texture("res/textures/game/world/lowres/mapForeground.png"));
+	grndfreObject->addComponentScript(grndfreRend);
 }
 
 void initTruck() {
