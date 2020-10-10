@@ -30,6 +30,7 @@ private:
 	GLFWwindow* m_window;
 	double m_runTime;
 	double m_lastFrameDelta;
+	bool m_limitTo60FPS;
 
 	Console* m_console;
 	InputSystem* m_inputSystem;
@@ -48,6 +49,9 @@ public:
 
 	double getRunTime();
 	double getLastFrameDelta();
+
+	void set60FpsLimitStatus(bool);
+	bool get60FpsLimitStatus();
 
 	static void start(void (*sFn)());
 	static void stop();

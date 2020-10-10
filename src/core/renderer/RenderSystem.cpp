@@ -88,10 +88,16 @@ void RenderSystem::update(double delta) {
 		int fps = 1000 / delta;
 		s += std::to_string(fps);
 		ImGui::Text(s.c_str());
+
 		ImGui::Checkbox("Render Components", &m_shouldRender);
+
 		float tempZoom = Camera::getInstance()->getZoomFactor();
 		ImGui::SliderFloat("Camera Zoom", &tempZoom, 0.1, 100);
 		Camera::getInstance()->setZoomFactor(tempZoom);
+
+		bool tempFpsLimit = Core::getInstance()->get60FpsLimitStatus();
+		ImGui::Checkbox("Limit to 60fps", &tempFpsLimit);
+		Core::getInstance()->set60FpsLimitStatus(tempFpsLimit);
 		ImGui::End();
 	}
 }
