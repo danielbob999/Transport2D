@@ -194,7 +194,7 @@ void RenderSystem::renderComponents() {
 		glActiveTexture(0);
 		glBindTexture(GL_TEXTURE_2D, tex.getId());
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex.getWidth(), tex.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, tex.getData());
+		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex.getWidth(), tex.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, tex.getData());
 
 		glUseProgram(m_shaderProgramId);
 		glUniform1i(glGetUniformLocation(m_shaderProgramId, "ourTexture"), 0);
