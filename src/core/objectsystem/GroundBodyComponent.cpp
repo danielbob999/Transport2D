@@ -3,6 +3,7 @@
 #include "../console/Console.h"
 #include "../renderer/GLIncludes.h"
 #include "../renderer/RenderSystem.h"
+#include "RenderComponent.h"
 
 using namespace core_objectsystem;
 using namespace core_physics;
@@ -20,6 +21,20 @@ void GroundBodyComponent::start() {
 }
 
 void GroundBodyComponent::update() {
+	float distanceToTruck = fabs(Object::getObjectByName("TruckObject")->getPosition().x - 130);
+
+	for (int i = 0; i < m_bridgeBodies.size(); i++) {
+		if (distanceToTruck > 50) {
+			RenderComponent* rc = (RenderComponent*)m_bridgeObjects[i]->getComponentScript("RenderComponent");
+			rc->setShouldRender(false);
+		} else {
+			RenderComponent* rc = (RenderComponent*)m_bridgeObjects[i]->getComponentScript("RenderComponent");
+			rc->setShouldRender(true);
+		}
+
+		m_bridgeObjects[i]->setPosition(m_bridgeBodies[i]->GetPosition());
+		m_bridgeObjects[i]->setRotation(-m_bridgeBodies[i]->GetAngle());
+	}
 }
 
 void GroundBodyComponent::close() {
@@ -64,6 +79,7 @@ void GroundBodyComponent::setGroundMode(int mode) {
 }
 
 void GroundBodyComponent::generate() {
+	// Clear all the old ground fixtrues
 	for (int i = 0; i < m_ground1Fixtures.size(); i++) {
 		m_ground1Body->DestroyFixture(m_ground1Fixtures[i]);
 	}
@@ -73,6 +89,13 @@ void GroundBodyComponent::generate() {
 	}
 
 	m_ground1Fixtures.clear();
+
+	// Clear the bodies for the bridge
+	for (int i = 0; i < m_bridgeBodies.size(); i++) {
+		PhysicsSystem::getInstance()->getWorld()->DestroyBody(m_bridgeBodies[i]);
+	}
+
+	m_bridgeBodies.clear();
 
 	// START OF GENERATION FOR GROUND 1
 		b2BodyDef bd;
@@ -153,6 +176,18 @@ void GroundBodyComponent::generate() {
 			bd.position.Set(111.0f + 2.0f * i, 7.0); //110 = x 7.0 = y
 			b2Body* body = PhysicsSystem::getInstance()->getWorld()->CreateBody(&bd);
 			body->CreateFixture(&fd);
+
+			m_bridgeBodies.push_back(body);
+
+			Object* obj = Object::createObject("BridgeObject_" + std::to_string(i), 111.0f + 2.0f * i, 7.0);
+			RenderComponent* rc = new RenderComponent();
+			rc->setColour(0.31, 0.12, 0);
+			rc->setSize(2.0f, 0.5f);
+			rc->setShouldRender(true);
+			rc->setOffset(b2Vec2(0, 0));
+			rc->setRenderPriority(5000);
+			obj->addComponentScript(rc);
+			m_bridgeObjects.push_back(obj);
 
 			b2Vec2 anchor(110.0f + 2.0f * i, 7.0); //Same as above
 			jd.Initialize(prevBody, body, anchor);
