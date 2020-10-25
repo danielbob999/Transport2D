@@ -19,7 +19,7 @@ PhysicsSystem::PhysicsSystem() {
 
 void PhysicsSystem::start() {
 	m_world = new b2World(b2Vec2(0, -9.8f));
-	m_showUI = true;
+	m_showUI = false;
 	m_renderDebug = true;
 
 	Console::log("PhysicsSystem (" + Console::ptrToString(this) + ") has successfully started");

@@ -34,7 +34,7 @@ void RenderSystem::start() {
 	m_camera = new Camera(width, height);
 	m_camera->setZoomFactor(24);
 
-	m_showUI = true;
+	m_showUI = false;
 	m_renderObjectOrigins = true;
 
 	std::fstream fileStream;
