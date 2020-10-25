@@ -87,9 +87,11 @@ void RenderSystem::update(double delta) {
 		s += "\nFPS: ";
 		int fps = 1000 / delta;
 		s += std::to_string(fps);
+		s += "\nItems Rendered: " + std::to_string(m_itemsRenderedLastFrame);
 		ImGui::Text(s.c_str());
 
 		ImGui::Checkbox("Render Components", &m_shouldRender);
+		ImGui::Checkbox("Render Origins", &m_renderObjectOrigins);
 
 		float tempZoom = Camera::getInstance()->getZoomFactor();
 		ImGui::SliderFloat("Camera Zoom", &tempZoom, 0.1, 100);
