@@ -6,6 +6,8 @@
 #include "../../core/input/InputSystem.h"
 #include "../../core/input/InputKeyDefs.h"
 #include "../../core/objectsystem/RenderComponent.h"
+#include "../../core/objectsystem/GroundBodyComponent.h"
+#include "imgui/imgui.h"
 #include <iostream>
 
 using namespace core_input;
@@ -18,6 +20,8 @@ void TruckCabinComponent::start() {
 	generate();
 
 	core_physics::PhysicsSystem::getInstance()->registerDrawableComponent(this);
+
+	setInventoryItem("Empty", 0);
 }
 
 void TruckCabinComponent::update() {
@@ -92,10 +96,54 @@ void TruckCabinComponent::update() {
 	Object::getObjectByName("Wheel5")->setRotation(-m_trailerWheel2->GetAngle());
 
 	//((RenderComponent*)Object::getObjectByName("Wheel1")->getComponentScript("RenderComponent"))->setSize((1), (1));
+
+	// Change the terrain based on this truck position
+	float distanceToSwitch = fabs(Object::getObjectById(getParentId())->getPosition().x - Object::getObjectByName("TrackSwitchPoint")->getPosition().x);
+
+	if (distanceToSwitch < 10.0f) {
+		if (InputSystem::isKeyDown(KEYBOARD_KEY_E)) {
+			GroundBodyComponent* goc = (GroundBodyComponent*)Object::getObjectByName("GroundObject")->getComponentScript("GroundBodyComponent");
+			int mode = goc->getGroundMode();
+
+			if (mode == 1) {
+				goc->setGroundMode(2);
+			} else {
+				goc->setGroundMode(1);
+			}
+
+			goc->generate();
+		}
+	}
+
+	// Draw the Inventory UI
+	b2Vec2 screenSize = Camera::getInstance()->getScreenSize();
+	ImGui::SetNextWindowPos(ImVec2(screenSize.x - 200 - 10, screenSize.y - 70 - 10), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(200, 70), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowBgAlpha(0.65f);
+
+	ImGui::Begin("Inventory", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
+	ImGui::Text(std::string("" + m_invItemName + "\n" + std::to_string(m_invItemWeight) + " tonnes").c_str());
+
+	ImGui::End();
 } 
 
 void TruckCabinComponent::close() {
 
+}
+
+std::string TruckCabinComponent::getInventoryItemName() {
+	return m_invItemName;
+}
+
+int TruckCabinComponent::getInventoryItemAmount() {
+	return m_invItemWeight;
+}
+
+void TruckCabinComponent::setInventoryItem(std::string name, int amnt) {
+	m_invItemName = name;
+	m_invItemWeight = amnt;
+
+	Console::log("Set the truck inventory. itemName=" + m_invItemName + ", itemAmount=" + std::to_string(m_invItemWeight));
 }
 
 void TruckCabinComponent::draw() {

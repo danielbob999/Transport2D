@@ -29,6 +29,10 @@ private:
 	b2WheelJoint* m_spring3;
 	b2WheelJoint* m_trailerSpring1;
 	b2WheelJoint* m_trailerSpring2;
+
+	// Faux inventory system
+	std::string m_invItemName;
+	int m_invItemWeight;
 public:
 	TruckCabinComponent();
 	~TruckCabinComponent();
@@ -39,6 +43,11 @@ public:
 
 	void draw() override;
 	void generate() override;
+
+	std::string getInventoryItemName();
+	int getInventoryItemAmount();
+
+	void setInventoryItem(std::string, int);
 
 	std::string getTypeString() override;
 };

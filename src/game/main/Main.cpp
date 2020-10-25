@@ -10,6 +10,7 @@
 #include "../../core/audio/AudioClip.h"
 #include "../../core/objectsystem/GroundBodyComponent.h"
 #include "TruckCabinComponent.h"
+#include "../../game/missionsystem/MissionSystem.h"
 using namespace core_audio;
 using namespace core_objectsystem;
 
@@ -53,6 +54,10 @@ void initTerrain() {
 	Object* grndfreObject = Object::createObject("GroundForegroundObject", (totalWidth / 2) - 7.5, 7.2);
 	RenderComponent* grndfreRend = generateRenderComponent(b2Vec2((totalWidth + 113), (totalWidth + 115) * 0.1581), b2Vec2(0, 0), true, 1, 1, 1, 3000, Texture("res/textures/game/world/mapForeground.png"));
 	grndfreObject->addComponentScript(grndfreRend);
+
+	Object* mso = Object::createObject("MissionSystemObject", 0, 0);
+	MissionSystem* ms = new MissionSystem();
+	mso->addComponentScript(ms);
 }
 
 void initTruck() {
@@ -147,6 +152,11 @@ void initTruck() {
 void init() {
 	initTerrain();
 	initTruck();
+
+	Object::createObject("MissionPointQuarry", 10, 6);
+	Object::createObject("MissionPointMine", 360, -6);
+	Object::createObject("MissionPointMill", 600, 6);
+	Object::createObject("TrackSwitchPoint", 198, 6);
 }
 
 int main() {
