@@ -74,7 +74,7 @@ void initTruck() {
 	Texture cabinTex = Texture("res/textures/game/truck/cabin.png");
 	cabinRc->setTexture(cabinTex);
 
-	Object* obj = Object::createObject("TruckObject", 0, 6);
+	Object* obj = Object::createObject("TruckObject", 0, 1);
 	obj->addComponentScript(tcc);
 	obj->addComponentScript(cabinRc);
 

@@ -29,6 +29,7 @@ private:
 	b2WheelJoint* m_spring3;
 	b2WheelJoint* m_trailerSpring1;
 	b2WheelJoint* m_trailerSpring2;
+	int m_orientation;
 
 	// Faux inventory system
 	std::string m_invItemName;
@@ -42,12 +43,14 @@ public:
 	void close() override;
 
 	void draw() override;
+	void destory();
 	void generate() override;
 
 	std::string getInventoryItemName();
 	int getInventoryItemAmount();
 
 	void setInventoryItem(std::string, int);
+	void swapTruckOrientation();
 
 	std::string getTypeString() override;
 };

@@ -14,6 +14,8 @@ using namespace core_input;
 
 TruckCabinComponent::TruckCabinComponent() {
 	m_scale = 1;
+	m_orientation = 1;
+	m_cabinBody = nullptr;
 }
 
 void TruckCabinComponent::start() {
@@ -125,6 +127,10 @@ void TruckCabinComponent::update() {
 	ImGui::Text(std::string("" + m_invItemName + "\n" + std::to_string(m_invItemWeight) + " tonnes").c_str());
 
 	ImGui::End();
+
+	if (InputSystem::isKeyDown(KEYBOARD_KEY_F)) {
+		swapTruckOrientation();
+	}
 } 
 
 void TruckCabinComponent::close() {
@@ -197,19 +203,32 @@ void TruckCabinComponent::draw() {
 }
 
 void TruckCabinComponent::generate() {
+	b2Vec2 worldOffset;
+
+	worldOffset = Object::getObjectById(getParentId())->getPosition();
+	Console::log("Generating Truck with offset (" + std::to_string(worldOffset.x) + ", " + std::to_string(worldOffset.y) + ")");
+
+	/*
+	if (m_cabinBody != nullptr) {
+		worldOffset = Object::getObjectById(getParentId())->getPosition();
+		Console::log("Generating Truck with offset (" + std::to_string(worldOffset.x) + ", " + std::to_string(worldOffset.y) + ")");
+	} else {
+		worldOffset = b2Vec2(0, 0);
+	}*/
+
 	b2PolygonShape chassis;
 	b2Vec2 vertices[8];
-	vertices[0].Set(-2.5f, -0.5f);
-	vertices[1].Set(1.5f, -0.5f);
-	vertices[2].Set(1.5f, 0.2f);
-	vertices[3].Set(-2.5f, 0.2f);
+	vertices[0].Set((-2.5f * m_orientation), -0.5f);
+	vertices[1].Set((1.5f * m_orientation), -0.5f);
+	vertices[2].Set((1.5f * m_orientation), 0.2f);
+	vertices[3].Set((-2.5f * m_orientation), 0.2f);
 	chassis.Set(vertices, 4);
 
 	b2PolygonShape cabin;
-	vertices[0].Set(-1.0f, 0.2f);
-	vertices[1].Set(1.5f, 0.2f);
-	vertices[2].Set(1.5f, 2.0f);
-	vertices[3].Set(-1.0f, 2.0f);
+	vertices[0].Set((-1.0f * m_orientation), 0.2f);
+	vertices[1].Set((1.5f * m_orientation), 0.2f);
+	vertices[2].Set((1.5f * m_orientation), 2.0f);
+	vertices[3].Set((-1.0f * m_orientation), 2.0f);
 	cabin.Set(vertices, 4);
 
 
@@ -218,7 +237,7 @@ void TruckCabinComponent::generate() {
 
 	b2BodyDef bd;
 	bd.type = b2_dynamicBody;
-	bd.position.Set(0.0f, 1.0f);
+	bd.position.Set(worldOffset.x, 1.0f + worldOffset.y);
 	m_truck = core_physics::PhysicsSystem::getInstance()->getWorld()->CreateBody(&bd);
 	m_truck->CreateFixture(&chassis, 1.0f);
 	m_truck->CreateFixture(&cabin, 1.0f);
@@ -230,23 +249,23 @@ void TruckCabinComponent::generate() {
 	fd.density = 1.0f;
 	fd.friction = 0.9f;
 
-	bd.position.Set(-1.0f, 0.35f);
+	bd.position.Set((-1.0f * m_orientation) + worldOffset.x, 0.35f + worldOffset.y);
 	m_wheel1 = core_physics::PhysicsSystem::getInstance()->getWorld()->CreateBody(&bd);
 	m_wheelFixtures[0] = m_wheel1->CreateFixture(&fd);
 	m_wheels[0] = m_wheel1;
 
-	bd.position.Set(-2.0f, 0.35f);
+	bd.position.Set((-2.0f * m_orientation) + worldOffset.x, 0.35f + worldOffset.y);
 	m_wheel2 = core_physics::PhysicsSystem::getInstance()->getWorld()->CreateBody(&bd);
 	m_wheelFixtures[1] = m_wheel2->CreateFixture(&fd);
 	m_wheels[1] = m_wheel2;
 
-	bd.position.Set(0.8f, 0.35f);
+	bd.position.Set((0.8f * m_orientation) + worldOffset.x, 0.35f + worldOffset.y);
 	m_wheel3 = core_physics::PhysicsSystem::getInstance()->getWorld()->CreateBody(&bd);
 	m_wheelFixtures[2] = m_wheel3->CreateFixture(&fd);
 	m_wheels[2] = m_wheel3;
 
 	b2WheelJointDef jd;
-	b2Vec2 axis(0.0f, 1.0f);
+	b2Vec2 axis((0.0f), 1.0f);
 
 	float mass1 = m_wheel1->GetMass() / 1.5f;
 	float mass2 = m_wheel2->GetMass() / 1.5f ;
@@ -293,18 +312,18 @@ void TruckCabinComponent::generate() {
 	{
 		b2PolygonShape box;
 		b2Vec2 vertices[8];
-		vertices[0].Set(-9.0, 2.3f);
-		vertices[1].Set(-1.7f, 2.3f);
-		vertices[2].Set(-1.7f, 0.2f);
-		vertices[3].Set(-9.0f, 0.2f);
+		vertices[0].Set((-9.0 * m_orientation), 2.3f);
+		vertices[1].Set((-1.7f * m_orientation), 2.3f);
+		vertices[2].Set((-1.7f * m_orientation), 0.2f);
+		vertices[3].Set((-9.0f * m_orientation), 0.2f);
 		box.Set(vertices, 4);
 
 
 		b2PolygonShape axle;
-		vertices[0].Set(-8.5, 0.2f);
-		vertices[1].Set(-6.0f, 0.2f);
-		vertices[2].Set(-6.0f, -0.5f);
-		vertices[3].Set(-8.5f, -0.5f);
+		vertices[0].Set((-8.5 * m_orientation), 0.2f);
+		vertices[1].Set((-6.0f * m_orientation), 0.2f);
+		vertices[2].Set((-6.0f * m_orientation), -0.5f);
+		vertices[3].Set((-8.5f * m_orientation), -0.5f);
 		axle.Set(vertices, 4);
 
 		b2CircleShape circle;
@@ -312,35 +331,34 @@ void TruckCabinComponent::generate() {
 
 		b2BodyDef bd;
 		bd.type = b2_dynamicBody;
-		bd.position.Set(0.0f, 1.0f);
+		bd.position.Set(worldOffset.x, 1.0f + worldOffset.y);
 		m_trailer = core_physics::PhysicsSystem::getInstance()->getWorld()->CreateBody(&bd);
 		m_trailer->CreateFixture(&box, 1.0f);
 		m_trailer->CreateFixture(&axle, 1.0f);
 
 		b2RevoluteJointDef rjd;
-		rjd.lowerAngle = -0.2f;
+		rjd.lowerAngle = -0.2f; // might need to change the signed ness of this and the below variable TRIED THIS
 		rjd.upperAngle = 0.2f;
 		rjd.enableLimit = true;
-		b2Vec2 anchor(-1.7f, 0.25f);
+		b2Vec2 anchor((-1.7f * m_orientation), 0.25f);
 		rjd.Initialize(m_truck, m_trailer, anchor);
 		core_physics::PhysicsSystem::getInstance()->getWorld()->CreateJoint(&rjd);
-
 
 		b2FixtureDef fd;
 		fd.shape = &circle;
 		fd.density = 1.0f;
 		fd.friction = 0.9f;
 
-		bd.position.Set(-6.5f, 0.35f);
+		bd.position.Set((-6.5f * m_orientation) + worldOffset.x, 0.35f + worldOffset.y);
 		m_trailerWheel1 = core_physics::PhysicsSystem::getInstance()->getWorld()->CreateBody(&bd);
 		m_trailerWheel1->CreateFixture(&fd);
 
-		bd.position.Set(-8.0f, 0.35f);
+		bd.position.Set((-8.0f * m_orientation) + worldOffset.x, 0.35f + worldOffset.y);
 		m_trailerWheel2 = core_physics::PhysicsSystem::getInstance()->getWorld()->CreateBody(&bd);
 		m_trailerWheel2->CreateFixture(&fd);
 
 		b2WheelJointDef jd;
-		b2Vec2 axis(0.0f, 1.0f);
+		b2Vec2 axis((0.0f), 1.0f);
 
 		float mass2 = m_trailerWheel1->GetMass();
 		float mass3 = m_trailerWheel2->GetMass();
@@ -371,6 +389,44 @@ void TruckCabinComponent::generate() {
 		jd.enableLimit = true;
 		m_trailerSpring2 = (b2WheelJoint*)core_physics::PhysicsSystem::getInstance()->getWorld()->CreateJoint(&jd);
 	}
+}
+
+void TruckCabinComponent::swapTruckOrientation() {
+	m_orientation = m_orientation * -1;
+
+	destory();
+	generate();
+
+	RenderComponent* cabRc = (RenderComponent*)Object::getObjectById(getParentId())->getComponentScript("RenderComponent");
+	RenderComponent* trailerRc = (RenderComponent*)Object::getObjectByName("TrailerObject")->getComponentScript("RenderComponent");
+	b2Vec2 cabSize = cabRc->getSize();
+	b2Vec2 cabOffset = cabRc->getOffset();
+	cabRc->setSize(cabSize.x * -1, cabSize.y); // Set the flipped size
+	cabRc->setOffset(b2Vec2(cabOffset.x * -1, cabOffset.y)); // Set the flipped offset
+
+	b2Vec2 trailerSize = trailerRc->getSize();
+	b2Vec2 trailerOffset = trailerRc->getOffset();
+	trailerRc->setSize(trailerSize.x * -1, trailerSize.y); // set the flipped size
+	trailerRc->setOffset(b2Vec2(trailerOffset.x * -1, trailerOffset.y)); // set the flipped offset
+
+}
+
+void TruckCabinComponent::destory() {
+	core_physics::PhysicsSystem::getInstance()->getWorld()->DestroyJoint(m_spring1);
+	core_physics::PhysicsSystem::getInstance()->getWorld()->DestroyJoint(m_spring2);
+	core_physics::PhysicsSystem::getInstance()->getWorld()->DestroyJoint(m_spring3);
+	core_physics::PhysicsSystem::getInstance()->getWorld()->DestroyJoint(m_trailerSpring1);
+	core_physics::PhysicsSystem::getInstance()->getWorld()->DestroyJoint(m_trailerSpring2);
+
+	core_physics::PhysicsSystem::getInstance()->getWorld()->DestroyBody(m_truck);
+	core_physics::PhysicsSystem::getInstance()->getWorld()->DestroyBody(m_trailer);
+
+	core_physics::PhysicsSystem::getInstance()->getWorld()->DestroyBody(m_wheel1);
+	core_physics::PhysicsSystem::getInstance()->getWorld()->DestroyBody(m_wheel2);
+	core_physics::PhysicsSystem::getInstance()->getWorld()->DestroyBody(m_wheel3);
+
+	core_physics::PhysicsSystem::getInstance()->getWorld()->DestroyBody(m_trailerWheel1);
+	core_physics::PhysicsSystem::getInstance()->getWorld()->DestroyBody(m_trailerWheel2);
 }
 
 std::string TruckCabinComponent::getTypeString() {
