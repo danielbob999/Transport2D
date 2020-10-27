@@ -131,15 +131,17 @@ void Core::run() {
         m_lastFrameDelta = (glfwGetTime() - m_runTime) * 1000; // Get the time difference (in seconds) then convert to milliseconds (x 1000)
         m_runTime = glfwGetTime();
 
-        double totalFrameTimeInMs = (glfwGetTime() - frameStartTime) * 1000;
-        double sleepTime = (1000 / 60.0) - totalFrameTimeInMs;
-        
-        // Reset the sleep back to zero if some calculation weirdness has happened
-        if (sleepTime < 0) {
-            sleepTime = 0;
-        }
+		if (m_limitTo60FPS) {
+			double totalFrameTimeInMs = (glfwGetTime() - frameStartTime) * 1000;
+			double sleepTime = (1000 / 60.0) - totalFrameTimeInMs;
 
-        Sleep(sleepTime);
+			// Reset the sleep back to zero if some calculation weirdness has happened
+			if (sleepTime < 0) {
+				sleepTime = 0;
+			}
+
+			Sleep(sleepTime);
+		}
     }
 
     // Call the close function of all ComponentScripts
@@ -192,6 +194,14 @@ double Core::getRunTime() {
 
 double Core::getLastFrameDelta() {
     return m_lastFrameDelta;
+}
+
+void Core::set60FpsLimitStatus(bool val) {
+	m_limitTo60FPS = val;
+}
+
+bool Core::get60FpsLimitStatus() {
+	return m_limitTo60FPS;
 }
 
 void Core::start(void (*iFn)()) {

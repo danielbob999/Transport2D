@@ -15,6 +15,7 @@ RenderComponent::RenderComponent() {
 	m_shouldRender = true;
 	m_size = b2Vec2(1, 1);
     m_renderPriority = 100;
+	m_offset = b2Vec2(0, 0);
 }
 
 void RenderComponent::start() {
@@ -62,6 +63,15 @@ void RenderComponent::setSize(float x, float y) {
 	m_size = b2Vec2(x, y);
 }
 
+void RenderComponent::setOffset(b2Vec2 offset) {
+	m_offset = offset;
+}
+
+
+b2Vec2 RenderComponent::getOffset() {
+	return m_offset;
+}
+
 b2Vec2 RenderComponent::getVertexWorldPosition(int vertId) {
     if (vertId < 1 || vertId > 4) {
         return b2Vec2(0, 0);
@@ -82,10 +92,10 @@ b2Vec2 RenderComponent::getVertexWorldPosition(int vertId) {
 
     
     float bounds[4] = {
-        ((parentPos.x) - (m_size.x / 2.0f)), // x      = 0
-        ((parentPos.y) + (m_size.y / 2.0f)), // y      = 1
-        m_size.x,                            // width  = 2
-        m_size.y                             // height = 3
+        ((parentPos.x + m_offset.x) - (m_size.x / 2.0f)),	// x      = 0
+        ((parentPos.y + m_offset.y) + (m_size.y / 2.0f)),	// y      = 1
+        m_size.x,											// width  = 2
+        m_size.y											// height = 3
     };
 
     if (vertId == 1) {
@@ -99,7 +109,7 @@ b2Vec2 RenderComponent::getVertexWorldPosition(int vertId) {
     }
 
     if (vertId == 2) {
-        b2Vec2 vertPos = b2Vec2(bounds[0] + bounds[2], bounds[1] + bounds[3]);
+        b2Vec2 vertPos = b2Vec2(bounds[0] + bounds[2], bounds[1] - bounds[3]);
 
         float x = parentPos.x + (vertPos.x - parentPos.x) * (float)cos(rotation) + (vertPos.y - parentPos.y) * (float)sin(rotation);
         float y = parentPos.y - (vertPos.x - parentPos.x) * (float)sin(rotation) + (vertPos.y - parentPos.y) * (float)cos(rotation);
@@ -109,7 +119,7 @@ b2Vec2 RenderComponent::getVertexWorldPosition(int vertId) {
     }
 
     if (vertId == 3) {
-        b2Vec2 vertPos = b2Vec2(bounds[0], bounds[1] + bounds[3]);
+        b2Vec2 vertPos = b2Vec2(bounds[0], bounds[1] - bounds[3]);
 
         float x = parentPos.x + (vertPos.x - parentPos.x) * (float)cos(rotation) + (vertPos.y - parentPos.y) * (float)sin(rotation);
         float y = parentPos.y - (vertPos.x - parentPos.x) * (float)sin(rotation) + (vertPos.y - parentPos.y) * (float)cos(rotation);

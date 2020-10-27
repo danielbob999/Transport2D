@@ -17,6 +17,7 @@ namespace core_renderer {
 		int m_itemsRenderedLastFrame;
 		bool m_renderObjectOrigins;
 		bool m_showUI;
+		bool m_shouldRender;
 
 		GLint compileAndLinkShader(const char*, const char*);
 		std::string getShaderInfoMsg(const GLuint);
@@ -37,8 +38,11 @@ namespace core_renderer {
 		void setOriginRenderStatus(bool);
 		bool getOriginRenderStatus();
 		static b2Vec2 worldToScreenCoords(b2Vec2);
+		static b2Vec2 applyRotationScaleToPoint(b2Vec2, b2Vec2, float, float);
 		bool getUIStatus();
 		void setUIStatus(bool);
+		bool getRenderStatus();
+		void setRenderStatus(bool);
 
 		static RenderSystem* getInstance();
 		static Texture& getDefaultTexture();

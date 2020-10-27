@@ -13,6 +13,7 @@ namespace core_objectsystem {
 		float m_colour[3];
 		b2Vec2 m_size;
 		int m_renderPriority;
+		b2Vec2 m_offset;
 	public:
 		RenderComponent();
 		~RenderComponent();
@@ -37,6 +38,9 @@ namespace core_objectsystem {
 
 		int getRenderPriority();
 		void setRenderPriority(int);
+
+		b2Vec2 getOffset();
+		void setOffset(b2Vec2);
 
 		b2Vec2 getVertexWorldPosition(int);
 

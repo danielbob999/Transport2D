@@ -1,5 +1,7 @@
 #include "InputSystem.h"
 #include "../console/Console.h"
+#include "../physics/PhysicsSystem.h"
+#include "../renderer/RenderSystem.h"
 #include <algorithm>
 using namespace core_input;
 
@@ -37,6 +39,8 @@ void InputSystem::inputCallbackFn(GLFWwindow* window, int key, int scancode, int
 	if (action == GLFW_PRESS) {
 		if (key == KEYBOARD_KEY_BACKSLASH) {
 			Console::getInstance()->setUIStatus(!Console::getInstance()->getUIStatus());
+			core_physics::PhysicsSystem::getInstance()->setUIStatus(!core_physics::PhysicsSystem::getInstance()->getUIStatus());
+			core_renderer::RenderSystem::getInstance()->setUIStatus(!core_renderer::RenderSystem::getInstance()->getUIStatus());
 			return;
 		}
 

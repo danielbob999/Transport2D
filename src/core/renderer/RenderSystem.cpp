@@ -22,6 +22,7 @@ RenderSystem::RenderSystem() {
 	}
 
 	s_instance = this;
+	m_shouldRender = true;
 
 	Console::log("RenderSystem (" + Console::ptrToString(s_instance) + ") has been initialised");
 }
@@ -31,9 +32,9 @@ void RenderSystem::start() {
 	int width, height;
 	glfwGetWindowSize(Core::getWindow(), &width, &height);
 	m_camera = new Camera(width, height);
-	m_camera->setZoomFactor(15);
+	m_camera->setZoomFactor(24);
 
-	m_showUI = true;
+	m_showUI = false;
 	m_renderObjectOrigins = true;
 
 	std::fstream fileStream;
@@ -86,7 +87,19 @@ void RenderSystem::update(double delta) {
 		s += "\nFPS: ";
 		int fps = 1000 / delta;
 		s += std::to_string(fps);
+		s += "\nItems Rendered: " + std::to_string(m_itemsRenderedLastFrame);
 		ImGui::Text(s.c_str());
+
+		ImGui::Checkbox("Render Components", &m_shouldRender);
+		ImGui::Checkbox("Render Origins", &m_renderObjectOrigins);
+
+		float tempZoom = Camera::getInstance()->getZoomFactor();
+		ImGui::SliderFloat("Camera Zoom", &tempZoom, 0.1, 100);
+		Camera::getInstance()->setZoomFactor(tempZoom);
+
+		bool tempFpsLimit = Core::getInstance()->get60FpsLimitStatus();
+		ImGui::Checkbox("Limit to 60fps", &tempFpsLimit);
+		Core::getInstance()->set60FpsLimitStatus(tempFpsLimit);
 		ImGui::End();
 	}
 }
@@ -95,16 +108,22 @@ void RenderSystem::render(double delta) {
 	glEnable(GL_TEXTURE);
 	glEnable(GL_BLEND);
 	glEnable(GL_PROGRAM_POINT_SIZE);
-	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_INDEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	renderComponents();
+	if (m_shouldRender) {
+		renderComponents();
+	}
+
+	// We need to disable blend so that the box2d rendering shows up
+	glDisable(GL_BLEND);
 
 	renderObjectOrigins();
+
 }
 
 void RenderSystem::renderComponents() {
@@ -177,7 +196,13 @@ void RenderSystem::renderComponents() {
 		glActiveTexture(0);
 		glBindTexture(GL_TEXTURE_2D, tex.getId());
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, tex.getWidth(), tex.getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, tex.getData());
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex.getWidth(), tex.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, tex.getData());
 
 		glUseProgram(m_shaderProgramId);
 		glUniform1i(glGetUniformLocation(m_shaderProgramId, "ourTexture"), 0);
@@ -316,6 +341,14 @@ int RenderSystem::getRenderCountLastFrame() {
 	return m_itemsRenderedLastFrame;
 }
 
+void RenderSystem::setRenderStatus(bool val) {
+	m_shouldRender = val;
+}
+
+bool RenderSystem::getRenderStatus() {
+	return m_shouldRender;
+}
+
 b2Vec2 RenderSystem::worldToScreenCoords(b2Vec2 worldPos) {
 	b2Vec2 screenCoords = b2Vec2(0, 0);
 	b2Vec2 cameraPos = Camera::getInstance()->getPosition();
@@ -324,6 +357,14 @@ b2Vec2 RenderSystem::worldToScreenCoords(b2Vec2 worldPos) {
 	screenCoords.y = ((worldPos.y - cameraPos.y) / (Camera::getInstance()->getScreenSize().y / 2)) * Camera::getInstance()->getZoomFactor();
 
 	return screenCoords;
+}
+
+b2Vec2 RenderSystem::applyRotationScaleToPoint(b2Vec2 point, b2Vec2 origin, float rotationInRad, float scale) {
+	float x = origin.x + (point.x - origin.x) * (float)cos(rotationInRad) + (point.y - origin.y) * (float)sin(rotationInRad);
+	float y = origin.y - (point.x - origin.x) * (float)sin(rotationInRad) + (point.y - origin.y) * (float)cos(rotationInRad);
+
+	//return b2Vec2(x / (Camera::getInstance()->getDefaultDisplayAreaWidth() / 2.0), y / (Camera::getInstance()->getDefaultDisplayAreaHeight() / 2.0));
+	return b2Vec2(x * scale, y * scale);
 }
 
 RenderSystem* RenderSystem::getInstance() {

@@ -47,7 +47,7 @@ namespace core_objectsystem {
 		void runComponentFn(int);
 
 		static Object* createObject();									// Creates a new Object with the default values
-		static Object* createObject(const std::string&, int x, int y);	// Creates a new Object with the supplied values
+		static Object* createObject(const std::string&, float x, float y);	// Creates a new Object with the supplied values
 		static std::vector<Object*>& getObjects();
 		static Object* getObjectByName(std::string);
 		static Object* getObjectById(int);
