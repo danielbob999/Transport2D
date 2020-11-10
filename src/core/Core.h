@@ -43,6 +43,7 @@ private:
 
 	void run();
 	void callObjectLoop(int code);
+	static bool checkForResourcesDir();
 public:
 	Core();
 	~Core();

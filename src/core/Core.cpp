@@ -209,6 +209,15 @@ void Core::start(void (*iFn)()) {
 		s_instance = new Core();
 	}
 
+    /* Check if the resources folder exists */
+    bool resExists = checkForResourcesDir();
+
+    if (resExists == false) {
+        // show windows popup
+        MessageBox(nullptr, TEXT("Failed to load. Make sure the resources folder is in the same directory as this program."), TEXT("Error"), MB_OK);
+        return;
+    }
+
     /*
      ===================================
       Initialise all the Core Systems here
@@ -223,6 +232,21 @@ void Core::start(void (*iFn)()) {
 	getInstance()->m_shouldBeLooping = true;
 
 	getInstance()->run();
+}
+
+bool Core::checkForResourcesDir() {
+    std::string path = "res";
+    DWORD dwAttrib = GetFileAttributesA(path.c_str());
+
+    if (dwAttrib == INVALID_FILE_ATTRIBUTES) {
+        return false;
+    }
+
+    if (dwAttrib == FILE_ATTRIBUTE_DIRECTORY) {
+        return true;
+    }
+
+    return false;
 }
 
 void Core::stop() {
