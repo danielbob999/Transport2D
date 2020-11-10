@@ -103,10 +103,29 @@ void TruckCabinComponent::update() {
 	float distanceToSwitch = fabs(Object::getObjectById(getParentId())->getPosition().x - Object::getObjectByName("TrackSwitchPoint")->getPosition().x);
 
 	if (distanceToSwitch < 10.0f) {
-		if (InputSystem::isKeyDown(KEYBOARD_KEY_E)) {
-			GroundBodyComponent* goc = (GroundBodyComponent*)Object::getObjectByName("GroundObject")->getComponentScript("GroundBodyComponent");
-			int mode = goc->getGroundMode();
+		// Show the temp ui
+		int windowWidth = 300;
+		int windowHeight = 100;
+		b2Vec2 screenSize = Camera::getInstance()->getScreenSize();
+		ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight), ImGuiCond_FirstUseEver);
+		ImGui::Begin("Path Switcher");
 
+		std::string s = "Press E to switch the path.\n\nCurrent Destination:";
+
+		GroundBodyComponent* goc = (GroundBodyComponent*)Object::getObjectByName("GroundObject")->getComponentScript("GroundBodyComponent");
+		int mode = goc->getGroundMode();
+
+		if (mode == 1) {
+			s += " Bancroft Mill";
+		} else {
+			s += " Crankshaft Mine";
+		}
+
+		ImGui::TextWrapped(s.c_str());
+		ImGui::End();
+
+		if (InputSystem::isKeyDown(KEYBOARD_KEY_E)) {
 			if (mode == 1) {
 				goc->setGroundMode(2);
 			} else {
