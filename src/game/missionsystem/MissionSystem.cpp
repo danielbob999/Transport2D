@@ -13,10 +13,10 @@ using namespace core_renderer;
 using namespace core_input;
 
 MissionSystem::MissionSystem() {
-	m_missions[0] = Mission("Hello and welcome to Transport2D. \n\n\I just got a phone call from Bazza down the way that needs dirt delivered to his tree farm. \n\nTask:\nLoad the truck up and head on over.", "Deliver the dirt to the mill", true, true, 30.0, 20);
+	m_missions[0] = Mission("Hello and welcome to Transport2D. \n\n\I just got a phone call from Bazza down the way that needs dirt delivered to his tree farm. \n\nTask:\nLoad the truck up and head on over.", "Deliver the dirt to the mill", true, false, 30.0, 20);
 	m_missions[1] = Mission("Well done with completing the first mission. Gazza has now contacted us from down in Crankshaft Mine with the request of some wood. \n\Task:\nTurn the  up to log pickup point, load up the truck, and deliver the logs to the mine.", "Deliver the logs to the mine", true, false, 0.0, 20);
-	m_missions[2] = Mission("3rd mission text", "Take Metals from the Mine to the Mill", true, false, 0.0, 20);
-	m_missions[3] = Mission("4th mission text", "Take wood from the Mill to the Quarry", true, false, 0.0, 20);
+	m_missions[2] = Mission("Gazza sure will be please with that shipment of wood.\n\nNow its time for a break......\n\nOr not. Hazza called minutes ago wanting some metal delivered up to the mill, something about a new conveyor belt. We best get on that.", "Take Metal from the Mine to the Mill", true, false, 0.0, 20);
+	m_missions[3] = Mission("Now that has been completed, lets get back to our original task, aye?\n\n As payment for the dirt, Bazza has donated a load of logs to the quarry.\n\n Load up the old girl and finish what we started!", "Take wood from the Mill to the Quarry", true, false, 0.0, 20);
 	m_currentMissionIndex = 0;
 	m_showFullUI = true;
 	m_finishedMissions = false;
@@ -100,7 +100,11 @@ void MissionSystem::update() {
 			m_showFullUI = true;
 		}
 
-		ImGui::TextWrapped(std::string(m_missions[m_currentMissionIndex].getShortMessage() + "\nTime Left: " + std::to_string(timeLeft)).c_str());
+		if (m_missions[m_currentMissionIndex].getTimedStatus()) {
+			ImGui::TextWrapped(std::string(m_missions[m_currentMissionIndex].getShortMessage() + "\nTime Left: " + std::to_string(timeLeft)).c_str());
+		} else {
+			ImGui::TextWrapped(std::string(m_missions[m_currentMissionIndex].getShortMessage()).c_str());
+		}
 
 		ImGui::End();
 	}
