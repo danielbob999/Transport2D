@@ -35,7 +35,8 @@ void RenderSystem::start() {
 	m_camera->setZoomFactor(24);
 
 	m_showUI = false;
-	m_renderObjectOrigins = true;
+	m_renderObjectOrigins = false;
+	Core::getInstance()->set60FpsLimitStatus(true);
 
 	std::fstream fileStream;
 	// Open the filestream and get the vertex source code from the file
