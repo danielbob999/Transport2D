@@ -13,6 +13,7 @@ Console::Console() {
 
 	s_instance = this;
 	m_showUI = false;
+	m_rescrollToBottom = true;
 }
 
 void Console::update() {
@@ -23,11 +24,25 @@ void Console::update() {
 			logStr += (*m_messages[i].msg) + "\n";
 		}
 
+		ImVec2 mainWindowSize(Camera::getInstance()->getScreenSize().x - 215, 400);
+
 		ImGui::SetNextWindowPos(ImVec2(5, 5), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(Camera::getInstance()->getScreenSize().x - 215, 400), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(mainWindowSize.x, 0), ImGuiCond_FirstUseEver);
 		ImGui::Begin("Console");
 
-		ImGui::Text(logStr.c_str());
+		ImGui::BeginChild("Scrolling", ImVec2(mainWindowSize.x - 20, mainWindowSize.y - 50));
+
+		for (int i = 0; i < m_messages.size(); i++) {
+			ImGui::TextWrapped(m_messages[i].msg->c_str());
+		}
+
+		if (m_rescrollToBottom) {
+			ImGui::SetScrollHereY(1.0f);
+			m_rescrollToBottom = false;
+		}
+
+		ImGui::EndChild();
+		
 		char buffer[1024] = "";
 
 		//ImGui::SetCursorPosY(380);
@@ -59,6 +74,8 @@ void Console::logInput(const std::string& str) {
 	getInstance()->m_messages.push_back(lm);
 
 	std::cout << *(lm.msg) << std::endl;
+
+	m_rescrollToBottom = true;
 }
 
 void Console::logInput(const char* str) {
