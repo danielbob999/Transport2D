@@ -12,6 +12,7 @@
 #include "../../includes/imgui/imgui_impl_opengl3.h"
 #include "audio/AudioManager.h"
 #include "physics/PhysicsSystem.h"
+#include "../game/controls/ControlsDisplay.h"
 using namespace core_input;
 using namespace core_renderer;
 using namespace core_audio;
@@ -37,6 +38,7 @@ private:
 	RenderSystem* m_renderSystem;
 	AudioManager* m_audioManager;
 	PhysicsSystem* m_physicsSystem;
+	ControlsDisplay* m_controlsDisplay;
 
 	// Funtion pointers
 	void (*initFn)();

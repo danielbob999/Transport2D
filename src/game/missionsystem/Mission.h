@@ -9,9 +9,12 @@ private:
 	bool m_isTimed;
 	float m_maxCompletionTime;
 	int m_materialsCompletionAmnt;
+	std::string m_startLocationName;
+	std::string m_endLocationName;
+	std::string m_materialName;
 public:
 	Mission();
-	Mission(std::string, std::string, bool, bool, float, int);
+	Mission(std::string, std::string, bool, bool, float, int, std::string, std::string, std::string);
 	~Mission();
 
 	std::string getMessage();
@@ -20,4 +23,7 @@ public:
 	bool getTimedStatus();
 	float getMaxCompletionTime();
 	int getMaterialCompletionAmnt();
+	std::string getMaterialName();
+	std::string getStartLocationName();
+	std::string getEndLocationName();
 };

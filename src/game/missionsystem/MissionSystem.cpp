@@ -13,10 +13,22 @@ using namespace core_renderer;
 using namespace core_input;
 
 MissionSystem::MissionSystem() {
-	m_missions[0] = Mission("Hello and welcome to Transport2D. \n\n\I just got a phone call from Bazza down the way that needs dirt delivered to his tree farm. \n\nTask:\nLoad the truck up and head on over.", "Deliver the dirt to the mill", true, false, 30.0, 20);
-	m_missions[1] = Mission("Well done with completing the first mission. Gazza has now contacted us from down in Crankshaft Mine with the request of some wood. \n\Task:\nTurn the  up to log pickup point, load up the truck, and deliver the logs to the mine.", "Deliver the logs to the mine", true, false, 0.0, 20);
-	m_missions[2] = Mission("Gazza sure will be please with that shipment of wood.\n\nNow its time for a break......\n\nOr not. Hazza called minutes ago wanting some metal delivered up to the mill, something about a new conveyor belt. We best get on that.", "Take Metal from the Mine to the Mill", true, false, 0.0, 20);
-	m_missions[3] = Mission("Now that has been completed, lets get back to our original task, aye?\n\n As payment for the dirt, Bazza has donated a load of logs to the quarry.\n\n Load up the old girl and finish what we started!", "Take wood from the Mill to the Quarry", true, false, 0.0, 20);
+	m_missions[0] = Mission("Hello and welcome to Transport2D. \n\n\I just got a phone call from Bazza down the way that needs dirt delivered to his tree farm. \n\nTask:\nLoad the truck up and head on over.", 
+		"Deliver the dirt to the mill", 
+		true, false, 0, 20, "MissionPointQuarry", "MissionPointMill", "Dirt");
+
+	m_missions[1] = Mission("Well done with completing the first mission. Gazza has now contacted us from down in Crankshaft Mine with the request of some wood. \n\nTask:\nTurn up to the log pickup point, load up the truck, and deliver the logs to the mine.", 
+		"Deliver the logs to the mine", 
+		true, false, 0.0, 20, "MissionPointMill", "MissionPointMine", "Wood");
+
+	m_missions[2] = Mission("Gazza sure will be please with that shipment of wood.\n\nNow its time for a break......\n\nOr not. Hazza called minutes ago wanting some metal delivered up to the mill, something about a new conveyor belt. We best get on that.", 
+		"Take Metal from the Mine to the Mill", 
+		true, false, 0.0, 20, "MissionPointMine", "MissionPointMill", "Metal");
+
+	m_missions[3] = Mission("Now that has been completed, lets get back to our original task, aye?\n\n As payment for the dirt, Bazza has donated a load of logs to the quarry.\n\n Load up the old girl and finish what we started!", 
+		"Take wood from the Mill to the Quarry", 
+		true, false, 0.0, 20, "MissionPointMill", "MissionPointQuarry", "Logs");
+
 	m_currentMissionIndex = 0;
 	m_showFullUI = true;
 	m_finishedMissions = false;
@@ -117,6 +129,7 @@ void MissionSystem::close() {
 }
 
 void MissionSystem::checkForMissionCompletion() {
+	/*
 	if (InputSystem::isKeyDown(KEYBOARD_KEY_E)) {
 		if (m_currentMissionIndex == 0) {
 			// Calculate the distances to the main mission points
@@ -220,6 +233,36 @@ void MissionSystem::checkForMissionCompletion() {
 				}
 			}
 			return;
+		}
+	}
+	*/
+
+	TruckCabinComponent* cabinComp = (TruckCabinComponent*)m_truckObject->getComponentScript("TruckCabinComponent");
+
+	float distanceToStart = fabs(m_truckObject->getPosition().x - Object::getObjectByName(m_missions[m_currentMissionIndex].getStartLocationName())->getPosition().x);
+	float distanceToEnd = fabs(m_truckObject->getPosition().x - Object::getObjectByName(m_missions[m_currentMissionIndex].getEndLocationName())->getPosition().x);
+
+	if (distanceToStart < MISSION_DETECT_DIST) {
+		// Display controls message
+		if (cabinComp->getInventoryItemAmount() == 0) {
+			ControlsDisplay::getInstance()->registerControl(this, "Load " + m_missions[m_currentMissionIndex].getMaterialName() + " in truck", "E");
+		}
+
+		if (InputSystem::isKeyDown(KEYBOARD_KEY_E)) {
+			if (cabinComp->getInventoryItemAmount() == 0) {
+				cabinComp->setInventoryItem(m_missions[m_currentMissionIndex].getMaterialName(), m_missions[m_currentMissionIndex].getMaterialCompletionAmnt());
+			}
+		}
+	}
+
+	if (distanceToEnd < MISSION_DETECT_DIST) {
+		// Display controls message
+		ControlsDisplay::getInstance()->registerControl(this, "Unload " + m_missions[m_currentMissionIndex].getMaterialName(), "E");
+
+		if (InputSystem::isKeyDown(KEYBOARD_KEY_E)) {
+			if (cabinComp->getInventoryItemAmount() >= m_missions[m_currentMissionIndex].getMaterialCompletionAmnt()) {
+				finishMission();
+			}
 		}
 	}
 }
