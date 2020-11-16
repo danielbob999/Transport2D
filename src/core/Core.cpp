@@ -212,6 +212,8 @@ void Core::start(void (*iFn)()) {
 		s_instance = new Core();
 	}
 
+    Console::log("Starting Transport2D. v" + std::to_string(VERSION_MAJOR) + "." + std::to_string(VERSION_MINOR));
+
     /* Check if the resources folder exists */
     bool resExists = checkForResourcesDir();
 
@@ -257,10 +259,9 @@ void Core::stop() {
 	getInstance()->m_shouldBeLooping = false;
 }
 
-void Core::getVersion(int* major, int* minor, int* patch) {
+void Core::getVersion(int* major, int* minor) {
 	*major = getInstance()->VERSION_MAJOR;
 	*minor = getInstance()->VERSION_MINOR;
-	*patch = getInstance()->VERSION_PATCH;
 	return;
 }
 

@@ -19,9 +19,8 @@ using namespace core_audio;
 using namespace core_physics;
 class Core {
 private:
-	const int VERSION_MAJOR = 1;
-	const int VERSION_MINOR = 0;
-	const int VERSION_PATCH = 0;
+	const static int VERSION_MAJOR = 1;
+	const static int VERSION_MINOR = 2;
 
 	static Core* s_instance;
 	static void glfwErrorCallbackFn(int, const char*);
@@ -61,5 +60,5 @@ public:
 
 	static Core* getInstance();
 	static GLFWwindow* getWindow();
-	static void getVersion(int*, int*, int*);
+	static void getVersion(int*, int*);
 };
