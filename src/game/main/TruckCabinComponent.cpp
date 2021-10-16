@@ -10,6 +10,7 @@
 #include "../controls/ControlsDisplay.h"
 #include "imgui/imgui.h"
 #include <iostream>
+#include "../../core/renderer/SDLIncludes.h"
 
 using namespace core_input;
 
@@ -41,14 +42,14 @@ void TruckCabinComponent::update() {
 	b2Vec2 pos = core_renderer::Camera::getInstance()->getPosition();
 	//core_renderer::Camera::getInstance()->setPosition();
 
-	if (core_input::InputSystem::isKeyHeld(KEYBOARD_KEY_D)) {
+	if (core_input::InputSystem::isKeyHeld(SDLK_d)) {
 		m_spring1->EnableMotor(true);
 		m_spring2->EnableMotor(true);
 		m_spring1->SetMotorSpeed(-40);
 		m_spring2->SetMotorSpeed(-40);
 		//std::cout << "Truck going right" << std::endl;
 	}
-	else if (core_input::InputSystem::isKeyHeld(KEYBOARD_KEY_A)){
+	else if (core_input::InputSystem::isKeyHeld(SDLK_a)){
 		m_spring1->EnableMotor(true);
 		m_spring2->EnableMotor(true);
 		m_spring1->SetMotorSpeed(40);
@@ -61,27 +62,6 @@ void TruckCabinComponent::update() {
 		m_spring1->EnableMotor(false);
 		m_spring2->EnableMotor(false);
 	}
-
-	/*
-	if (core_input::InputSystem::isKeyDown(KEYBOARD_KEY_D)) {
-		m_spring1->SetMotorSpeed(-100);
-		m_spring2->SetMotorSpeed(-100);
-		std::cout << "Truck going left" << std::endl;
-	}
-
-	if (core_input::InputSystem::isKeyDown(KEYBOARD_KEY_S)) {
-		m_spring1->SetMotorSpeed(0);
-		m_spring2->SetMotorSpeed(0);
-		std::cout << "Truck stopping" << std::endl;
-	}*/
-
-	/*
-	if (core_input::InputSystem::isKeyHeld(KEYBOARD_KEY_P)) {
-		Camera::getInstance()->setPosition(Camera::getInstance()->getPosition().x + 1.5f, Camera::getInstance()->getPosition().y);
-	}
-	else if (core_input::InputSystem::isKeyHeld(KEYBOARD_KEY_O)) {
-		Camera::getInstance()->setPosition(Camera::getInstance()->getPosition().x - 1.5f, Camera::getInstance()->getPosition().y);
-	}*/
 
 	core_renderer::Camera::getInstance()->setPosition(thisObject->getPosition().x, thisObject->getPosition().y + 6.5);
 
@@ -117,7 +97,7 @@ void TruckCabinComponent::update() {
 
 		ControlsDisplay::getInstance()->registerControl(nullptr, s, "E");
 
-		if (InputSystem::isKeyDown(KEYBOARD_KEY_E)) {
+		if (InputSystem::isKeyDown(SDLK_e)) {
 			if (mode == 1) {
 				goc->setGroundMode(2);
 			} else {
@@ -142,7 +122,7 @@ void TruckCabinComponent::update() {
 	// Show the control hint from switch truck orientation
 	ControlsDisplay::getInstance()->registerControl(this, "Turn truck around", "F");
 
-	if (InputSystem::isKeyDown(KEYBOARD_KEY_F)) {
+	if (InputSystem::isKeyDown(SDLK_f)) {
 		swapTruckOrientation();
 	}
 } 

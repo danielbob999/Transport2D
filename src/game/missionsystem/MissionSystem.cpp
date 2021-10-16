@@ -129,113 +129,6 @@ void MissionSystem::close() {
 }
 
 void MissionSystem::checkForMissionCompletion() {
-	/*
-	if (InputSystem::isKeyDown(KEYBOARD_KEY_E)) {
-		if (m_currentMissionIndex == 0) {
-			// Calculate the distances to the main mission points
-			float distanceToQuarryPnt = fabs(m_truckObject->getPosition().x - Object::getObjectByName("MissionPointQuarry")->getPosition().x);
-			float distanceToMillPnt = fabs(m_truckObject->getPosition().x - Object::getObjectByName("MissionPointMill")->getPosition().x);
-
-			// If the truck is near the quary, fill up the truck
-			if (distanceToQuarryPnt < MISSION_DETECT_DIST) {
-				TruckCabinComponent* comp = (TruckCabinComponent*)m_truckObject->getComponentScript("TruckCabinComponent");
-
-				if (comp->getInventoryItemAmount() < m_missions[m_currentMissionIndex].getMaterialCompletionAmnt()) {
-					Console::log("filled up now");
-					comp->setInventoryItem("Dirt", m_missions[m_currentMissionIndex].getMaterialCompletionAmnt());
-				}
-			}
-
-			if (distanceToMillPnt < MISSION_DETECT_DIST) {
-				TruckCabinComponent* comp = (TruckCabinComponent*)m_truckObject->getComponentScript("TruckCabinComponent");
-
-				// If the truck has the correct material and the correct amount, finish the mission
-				if (comp->getInventoryItemAmount() >= m_missions[m_currentMissionIndex].getMaterialCompletionAmnt()) {
-					finishMission();
-				}
-			}
-
-			return;
-		}
-
-		if (m_currentMissionIndex == 1) {
-			// Calculate the distances to the main mission points
-			float distanceToMillPnt = fabs(m_truckObject->getPosition().x - Object::getObjectByName("MissionPointMill")->getPosition().x);
-			float distanceToMinePnt = fabs(m_truckObject->getPosition().x - Object::getObjectByName("MissionPointMine")->getPosition().x);
-
-			// If the truck is near the mill, fill up the truck
-			if (distanceToMillPnt < MISSION_DETECT_DIST) {
-				TruckCabinComponent* comp = (TruckCabinComponent*)m_truckObject->getComponentScript("TruckCabinComponent");
-
-				if (comp->getInventoryItemAmount() < m_missions[m_currentMissionIndex].getMaterialCompletionAmnt()) {
-					Console::log("filled up now");
-					comp->setInventoryItem("Wood", m_missions[m_currentMissionIndex].getMaterialCompletionAmnt());
-				}
-			}
-
-			if (distanceToMinePnt < MISSION_DETECT_DIST) {
-				TruckCabinComponent* comp = (TruckCabinComponent*)m_truckObject->getComponentScript("TruckCabinComponent");
-
-				// If the truck has the correct material and the correct amount, finish the mission
-				if (comp->getInventoryItemAmount() >= m_missions[m_currentMissionIndex].getMaterialCompletionAmnt()) {
-					finishMission();
-				}
-			}
-
-			return;
-		}
-
-		if (m_currentMissionIndex == 2) {
-			// Calculate the distances to the main mission points
-			float distanceToMinePnt = fabs(m_truckObject->getPosition().x - Object::getObjectByName("MissionPointMine")->getPosition().x);
-			float distanceToMillPnt = fabs(m_truckObject->getPosition().x - Object::getObjectByName("MissionPointMill")->getPosition().x);
-
-			// If the truck is near the mine, fill up the truck
-			if (distanceToMinePnt < MISSION_DETECT_DIST) {
-				TruckCabinComponent* comp = (TruckCabinComponent*)m_truckObject->getComponentScript("TruckCabinComponent");
-
-				if (comp->getInventoryItemAmount() < m_missions[m_currentMissionIndex].getMaterialCompletionAmnt()) {
-					comp->setInventoryItem("Metal", m_missions[m_currentMissionIndex].getMaterialCompletionAmnt());
-				}
-			}
-
-			if (distanceToMillPnt < MISSION_DETECT_DIST) {
-				TruckCabinComponent* comp = (TruckCabinComponent*)m_truckObject->getComponentScript("TruckCabinComponent");
-
-				// If the truck has the correct material and the correct amount, finish the mission
-				if (comp->getInventoryItemAmount() >= m_missions[m_currentMissionIndex].getMaterialCompletionAmnt()) {
-					finishMission();
-				}
-			}
-			return;
-		}
-
-		if (m_currentMissionIndex == 3) {
-			// Calculate the distances to the main mission points
-			float distanceToMillPnt = fabs(m_truckObject->getPosition().x - Object::getObjectByName("MissionPointMill")->getPosition().x);
-			float distanceToQuarryPnt = fabs(m_truckObject->getPosition().x - Object::getObjectByName("MissionPointQuarry")->getPosition().x);
-
-			// If the truck is near the mill, fill up the truck
-			if (distanceToMillPnt < MISSION_DETECT_DIST) {
-				TruckCabinComponent* comp = (TruckCabinComponent*)m_truckObject->getComponentScript("TruckCabinComponent");
-
-				if (comp->getInventoryItemAmount() < m_missions[m_currentMissionIndex].getMaterialCompletionAmnt()) {
-					comp->setInventoryItem("Wood", m_missions[m_currentMissionIndex].getMaterialCompletionAmnt());
-				}
-			}
-
-			if (distanceToQuarryPnt < MISSION_DETECT_DIST) {
-				TruckCabinComponent* comp = (TruckCabinComponent*)m_truckObject->getComponentScript("TruckCabinComponent");
-
-				// If the truck has the correct material and the correct amount, finish the mission
-				if (comp->getInventoryItemAmount() >= m_missions[m_currentMissionIndex].getMaterialCompletionAmnt()) {
-					finishMission();
-				}
-			}
-			return;
-		}
-	}
-	*/
 
 	TruckCabinComponent* cabinComp = (TruckCabinComponent*)m_truckObject->getComponentScript("TruckCabinComponent");
 
@@ -248,7 +141,7 @@ void MissionSystem::checkForMissionCompletion() {
 			ControlsDisplay::getInstance()->registerControl(this, "Load " + m_missions[m_currentMissionIndex].getMaterialName() + " in truck", "E");
 		}
 
-		if (InputSystem::isKeyDown(KEYBOARD_KEY_E)) {
+		if (InputSystem::isKeyDown(SDLK_e)) {
 			if (cabinComp->getInventoryItemAmount() == 0) {
 				cabinComp->setInventoryItem(m_missions[m_currentMissionIndex].getMaterialName(), m_missions[m_currentMissionIndex].getMaterialCompletionAmnt());
 			}
@@ -259,7 +152,7 @@ void MissionSystem::checkForMissionCompletion() {
 		// Display controls message
 		ControlsDisplay::getInstance()->registerControl(this, "Unload " + m_missions[m_currentMissionIndex].getMaterialName(), "E");
 
-		if (InputSystem::isKeyDown(KEYBOARD_KEY_E)) {
+		if (InputSystem::isKeyDown(SDLK_e)) {
 			if (cabinComp->getInventoryItemAmount() >= m_missions[m_currentMissionIndex].getMaterialCompletionAmnt()) {
 				finishMission();
 			}

@@ -31,33 +31,35 @@ InputSystem::InputSystem() {
 	Console::log("InputSystem (" + Console::ptrToString(s_instance) + ") has been initialised");
 }
 
-void InputSystem::inputCallbackFn(GLFWwindow* window, int key, int scancode, int action, int mods) {
+void InputSystem::logKeyboardAction(SDL_KeyboardEvent& e) {
 	if (ImGui::GetIO().WantCaptureKeyboard) {
 		return;
 	}
 
-	if (action == GLFW_PRESS) {
-		if (key == KEYBOARD_KEY_BACKSLASH) {
+	// If the keyboard action is someone pressing a key
+	if (e.type == SDL_KEYDOWN) {
+		if (e.keysym.sym == SDLK_BACKSLASH) {
 			Console::getInstance()->setUIStatus(!Console::getInstance()->getUIStatus());
 			core_physics::PhysicsSystem::getInstance()->setUIStatus(!core_physics::PhysicsSystem::getInstance()->getUIStatus());
 			core_renderer::RenderSystem::getInstance()->setUIStatus(!core_renderer::RenderSystem::getInstance()->getUIStatus());
 			return;
 		}
 
-		if (!getInstance()->m_keysDownLocker[key]) { // if the down press on this key isn't locked
-			getInstance()->m_keysDownThisFrame[key] = true;
-			getInstance()->m_keysDownLocker[key] = true;
+		if (!getInstance()->m_keysDownLocker[e.keysym.sym]) { // if the down press on this key isn't locked
+			getInstance()->m_keysDownThisFrame[e.keysym.sym] = true;
+			getInstance()->m_keysDownLocker[e.keysym.sym] = true;
 		}
 
-		getInstance()->m_keysHeldThisFrame[key] = true;
+		getInstance()->m_keysHeldThisFrame[e.keysym.sym] = true;
 		return;
 	}
 
-	if (action == GLFW_RELEASE) {
-		getInstance()->m_keysUpThisFrame[key] = true;
-		getInstance()->m_keysHeldThisFrame[key] = false;
+	// If the keyboard action is someone releasing a key
+	if (e.type == SDL_KEYUP) {
+		getInstance()->m_keysUpThisFrame[e.keysym.sym] = true;
+		getInstance()->m_keysHeldThisFrame[e.keysym.sym] = false;
 
-		getInstance()->m_keysDownLocker[key] = false; // Unlock the down key
+		getInstance()->m_keysDownLocker[e.keysym.sym] = false; // Unlock the down key
 		return;
 	}
 }

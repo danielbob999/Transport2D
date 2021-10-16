@@ -2,7 +2,6 @@
 #include <string>
 #include "../../core/core.h"
 #include "../../core/console/Console.h"
-#include "TestCompScript.h"
 #include "../../core/objectsystem/ComponentScript.h"
 #include "../../core/objectsystem/Object.h"
 #include "../../core/objectsystem/AudioComponent.h"

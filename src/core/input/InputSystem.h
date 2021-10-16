@@ -4,6 +4,7 @@
 #include "../physics/PhysicsSystem.h"
 #include "../renderer/RenderSystem.h"
 #include "InputKeyDefs.h"
+#include "../renderer/SDLIncludes.h"
 #include "imgui/imgui.h"
 
 namespace core_input {
@@ -26,7 +27,8 @@ namespace core_input {
 		void render(double) override;
 		void close() override;
 
-		static void inputCallbackFn(GLFWwindow*, int, int, int, int);
+		void logKeyboardAction(SDL_KeyboardEvent& event);
+
 		static bool isKeyDown(int);
 		static bool isKeyHeld(int);
 		static bool isKeyUp(int);

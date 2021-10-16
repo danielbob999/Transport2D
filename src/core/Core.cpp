@@ -104,14 +104,6 @@ void Core::run() {
     SDL_Event e;
 
     while (!quit) {
-        //Handle events on queue
-        while (SDL_PollEvent(&e) != 0) {
-            //User requests quit
-            if (e.type == SDL_QUIT) {
-                quit = true;
-            }
-        }
-
         double frameStartTime = glfwGetTime();
 
         // Start a new GUI frame here. ImGui cal be called from all update functions
@@ -153,6 +145,18 @@ void Core::run() {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         SDL_GL_SwapWindow(m_window);
+
+        //Handle events on queue
+        while (SDL_PollEvent(&e) != 0) {
+            //User requests quit
+            if (e.type == SDL_QUIT) {
+                quit = true;
+            }
+
+            if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
+                m_inputSystem->logKeyboardAction(e.key);
+            }
+        }
     }
 
     /*
