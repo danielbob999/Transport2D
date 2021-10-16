@@ -85,7 +85,7 @@ void MissionSystem::update() {
 		int windowWidth = 400;
 		int windowHeight = 300;
 		b2Vec2 screenSize = Camera::getInstance()->getScreenSize();
-		ImGui::SetNextWindowPos(ImVec2((screenSize.x / 2.0f) - (windowWidth / 2.0f), (screenSize.y / 2.0f) - (windowHeight / 2.0f)), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowPos(ImVec2((screenSize.x / 2.0f) - (windowWidth / 2.0f), (screenSize.y / 2.0f - (windowHeight / 2.0f))), ImGuiCond_FirstUseEver);
 		ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight), ImGuiCond_FirstUseEver);
 		ImGui::SetNextWindowBgAlpha(0.65f);
 		ImGui::Begin(std::string("Mission #" + std::to_string(m_currentMissionIndex + 1)).c_str(), NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);

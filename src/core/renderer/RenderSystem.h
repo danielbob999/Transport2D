@@ -2,6 +2,7 @@
 #include <string>
 #include "../coresystem/CoreSystem.h"
 #include "GLIncludes.h"
+#include "SDLIncludes.h"
 #include "Camera.h"
 #include "Texture.h"
 #include "imgui/imgui.h"

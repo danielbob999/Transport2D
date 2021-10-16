@@ -5,7 +5,7 @@
 #include "input/InputSystem.h"
 #include "renderer/RenderSystem.h"
 #include "renderer/Camera.h"
-#include "SDL/SDL.h"
+#include "renderer/SDLIncludes.h"
 
 using namespace core_input;
 using namespace core_objectsystem;
@@ -26,9 +26,6 @@ void Core::glfwWindowResizeCallbackFn(GLFWwindow* window, int width, int height)
 
 /* Private functions */
 void Core::run() {
-    SDL_Window* window;
-    SDL_GLContext context;
-
     // Initialize SDL Video
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fprintf(stderr, "Failed to initialize SDL video\n");
@@ -36,13 +33,9 @@ void Core::run() {
     }
 
     // Create main window
-    window = SDL_CreateWindow(
-        "SDL App",
-        SDL_WINDOWPOS_CENTERED,
-        SDL_WINDOWPOS_CENTERED,
-        1152, 648,
-        SDL_WINDOW_OPENGL);
-    if (window == NULL) {
+    m_window = SDL_CreateWindow("Transport 2D", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1152, 648, SDL_WINDOW_OPENGL);
+    
+    if (m_window == NULL) {
         fprintf(stderr, "Failed to create main window\n");
         SDL_Quit();
         return;
@@ -56,10 +49,11 @@ void Core::run() {
         SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    context = SDL_GL_CreateContext(window);
-    if (context == NULL) {
+    m_context = SDL_GL_CreateContext(m_window);
+
+    if (m_context == NULL) {
         fprintf(stderr, "Failed to create GL context\n");
-        SDL_DestroyWindow(window);
+        SDL_DestroyWindow(m_window);
         SDL_Quit();
         return;
     }
@@ -72,8 +66,8 @@ void Core::run() {
     err = glewInit();
     if (err != GLEW_OK) {
         fprintf(stderr, "Failed to init GLEW\n");
-        SDL_GL_DeleteContext(context);
-        SDL_DestroyWindow(window);
+        SDL_GL_DeleteContext(m_context);
+        SDL_DestroyWindow(m_window);
         SDL_Quit();
         return;
     }
@@ -86,7 +80,7 @@ void Core::run() {
     ImGui::StyleColorsLight();
 
     //ImGui_ImplGlfw_InitForOpenGL(m_window, true);
-    ImGui_ImplSDL2_InitForOpenGL(window, context);
+    ImGui_ImplSDL2_InitForOpenGL(m_window, m_context);
     ImGui_ImplOpenGL3_Init("#version 130");
 
     /*
@@ -158,7 +152,7 @@ void Core::run() {
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        SDL_GL_SwapWindow(window);
+        SDL_GL_SwapWindow(m_window);
     }
 
     /*
@@ -177,7 +171,7 @@ void Core::run() {
     ImGui::DestroyContext();
 
     //Destroy window
-    SDL_DestroyWindow(window);
+    SDL_DestroyWindow(m_window);
 
     //Quit SDL subsystems
     SDL_Quit();
@@ -288,9 +282,15 @@ Core* Core::getInstance() {
 	return s_instance;
 }
 
-GLFWwindow* Core::getWindow() {
+SDL_Window* Core::getWindow() {
     if (getInstance() != nullptr) {
         return getInstance()->m_window;
+    }
+}
+
+SDL_GLContext Core::getContext() {
+    if (getInstance() != nullptr) {
+        return getInstance()->m_context;
     }
 }
 

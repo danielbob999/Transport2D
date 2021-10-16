@@ -30,7 +30,7 @@ RenderSystem::RenderSystem() {
 void RenderSystem::start() {
 	// Create a Camera
 	int width, height;
-	glfwGetWindowSize(Core::getWindow(), &width, &height);
+	SDL_GetWindowSize(Core::getWindow(), &width, &height);
 	m_camera = new Camera(width, height);
 	m_camera->setZoomFactor(24);
 

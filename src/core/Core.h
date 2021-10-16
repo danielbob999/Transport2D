@@ -29,7 +29,8 @@ private:
 	static void glfwWindowResizeCallbackFn(GLFWwindow*, int, int);
 	
 	bool m_shouldBeLooping;
-	GLFWwindow* m_window;
+	SDL_Window* m_window;
+	SDL_GLContext m_context;
 	double m_runTime;
 	double m_lastFrameDelta;
 	bool m_limitTo60FPS;
@@ -61,6 +62,7 @@ public:
 	static void stop();
 
 	static Core* getInstance();
-	static GLFWwindow* getWindow();
+	static SDL_Window* getWindow();
+	static SDL_GLContext getContext();
 	static void getVersion(int*, int*);
 };

@@ -161,4 +161,5 @@ void init() {
 
 int main() {
 	Core::start(init);
+	return 0;
 }
