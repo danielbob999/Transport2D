@@ -14,6 +14,7 @@ private:
 	static Console* s_instance;
 	std::vector<LogMsg> m_messages;
 	bool m_showUI;
+	bool m_rescrollToBottom;
 
 	void saveToFile();
 	std::string generateLogStr(const int&, const std::string&);

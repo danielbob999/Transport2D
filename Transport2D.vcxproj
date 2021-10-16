@@ -168,6 +168,7 @@
     <ClCompile Include="src\core\renderer\Camera.cpp" />
     <ClCompile Include="src\core\renderer\RenderSystem.cpp" />
     <ClCompile Include="src\core\renderer\Texture.cpp" />
+    <ClCompile Include="src\game\controls\ControlsDisplay.cpp" />
     <ClCompile Include="src\game\main\Main.cpp" />
     <ClCompile Include="src\game\main\TestCompScript.cpp" />
     <ClCompile Include="src\game\main\TruckCabinComponent.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="src\core\renderer\GLIncludes.h" />
     <ClInclude Include="src\core\renderer\RenderSystem.h" />
     <ClInclude Include="src\core\renderer\Texture.h" />
+    <ClInclude Include="src\game\controls\ControlsDisplay.h" />
     <ClInclude Include="src\game\main\TestCompScript.h" />
     <ClInclude Include="src\game\main\TruckCabinComponent.h" />
     <ClInclude Include="src\game\missionsystem\Mission.h" />

@@ -12,15 +12,15 @@
 #include "../../includes/imgui/imgui_impl_opengl3.h"
 #include "audio/AudioManager.h"
 #include "physics/PhysicsSystem.h"
+#include "../game/controls/ControlsDisplay.h"
 using namespace core_input;
 using namespace core_renderer;
 using namespace core_audio;
 using namespace core_physics;
 class Core {
 private:
-	const int VERSION_MAJOR = 1;
-	const int VERSION_MINOR = 0;
-	const int VERSION_PATCH = 0;
+	const static int VERSION_MAJOR = 1;
+	const static int VERSION_MINOR = 2;
 
 	static Core* s_instance;
 	static void glfwErrorCallbackFn(int, const char*);
@@ -37,6 +37,7 @@ private:
 	RenderSystem* m_renderSystem;
 	AudioManager* m_audioManager;
 	PhysicsSystem* m_physicsSystem;
+	ControlsDisplay* m_controlsDisplay;
 
 	// Funtion pointers
 	void (*initFn)();
@@ -59,5 +60,5 @@ public:
 
 	static Core* getInstance();
 	static GLFWwindow* getWindow();
-	static void getVersion(int*, int*, int*);
+	static void getVersion(int*, int*);
 };

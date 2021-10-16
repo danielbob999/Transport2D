@@ -73,6 +73,7 @@ void Core::run() {
     m_physicsSystem->start();
     m_renderSystem->start();
 	m_audioManager->start();
+    m_controlsDisplay->start();
 
     // Call the init function provided. This is where Objects/ComponentScripts should be created.
     initFn();
@@ -101,6 +102,7 @@ void Core::run() {
         m_physicsSystem->update(m_lastFrameDelta);
 		m_audioManager->update(m_lastFrameDelta);
         m_inputSystem->update(m_lastFrameDelta); // This must come after every other update
+        m_controlsDisplay->update(m_lastFrameDelta);
         m_console->update();
 
         /* Render here */
@@ -156,6 +158,7 @@ void Core::run() {
     m_inputSystem->close();
     m_renderSystem->close();
 	m_audioManager->close();
+    m_controlsDisplay->close();
     m_physicsSystem->close();
 
     ImGui_ImplOpenGL3_Shutdown();
@@ -209,6 +212,8 @@ void Core::start(void (*iFn)()) {
 		s_instance = new Core();
 	}
 
+    Console::log("Starting Transport2D. v" + std::to_string(VERSION_MAJOR) + "." + std::to_string(VERSION_MINOR));
+
     /* Check if the resources folder exists */
     bool resExists = checkForResourcesDir();
 
@@ -227,6 +232,7 @@ void Core::start(void (*iFn)()) {
     getInstance()->m_renderSystem = new RenderSystem();
 	getInstance()->m_audioManager = new AudioManager();
     getInstance()->m_physicsSystem = new PhysicsSystem();
+    getInstance()->m_controlsDisplay = new ControlsDisplay();
     getInstance()->initFn = iFn;
 
 	getInstance()->m_shouldBeLooping = true;
@@ -253,10 +259,9 @@ void Core::stop() {
 	getInstance()->m_shouldBeLooping = false;
 }
 
-void Core::getVersion(int* major, int* minor, int* patch) {
+void Core::getVersion(int* major, int* minor) {
 	*major = getInstance()->VERSION_MAJOR;
 	*minor = getInstance()->VERSION_MINOR;
-	*patch = getInstance()->VERSION_PATCH;
 	return;
 }
 

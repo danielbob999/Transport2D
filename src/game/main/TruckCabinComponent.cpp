@@ -7,6 +7,7 @@
 #include "../../core/input/InputKeyDefs.h"
 #include "../../core/objectsystem/RenderComponent.h"
 #include "../../core/objectsystem/GroundBodyComponent.h"
+#include "../controls/ControlsDisplay.h"
 #include "imgui/imgui.h"
 #include <iostream>
 
@@ -103,27 +104,18 @@ void TruckCabinComponent::update() {
 	float distanceToSwitch = fabs(Object::getObjectById(getParentId())->getPosition().x - Object::getObjectByName("TrackSwitchPoint")->getPosition().x);
 
 	if (distanceToSwitch < 10.0f) {
-		// Show the temp ui
-		int windowWidth = 300;
-		int windowHeight = 100;
-		b2Vec2 screenSize = Camera::getInstance()->getScreenSize();
-		ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight), ImGuiCond_FirstUseEver);
-		ImGui::Begin("Path Switcher");
-
-		std::string s = "Press E to switch the path.\n\nCurrent Destination:";
 
 		GroundBodyComponent* goc = (GroundBodyComponent*)Object::getObjectByName("GroundObject")->getComponentScript("GroundBodyComponent");
 		int mode = goc->getGroundMode();
 
+		std::string s = "Change Path (Current: ";
 		if (mode == 1) {
-			s += " Bancroft Mill";
+			s += " Bancroft Mill)";
 		} else {
-			s += " Crankshaft Mine";
+			s += " Crankshaft Mine)";
 		}
 
-		ImGui::TextWrapped(s.c_str());
-		ImGui::End();
+		ControlsDisplay::getInstance()->registerControl(nullptr, s, "E");
 
 		if (InputSystem::isKeyDown(KEYBOARD_KEY_E)) {
 			if (mode == 1) {
@@ -146,6 +138,9 @@ void TruckCabinComponent::update() {
 	ImGui::Text(std::string("" + m_invItemName + "\n" + std::to_string(m_invItemWeight) + " tonnes").c_str());
 
 	ImGui::End();
+
+	// Show the control hint from switch truck orientation
+	ControlsDisplay::getInstance()->registerControl(this, "Turn truck around", "F");
 
 	if (InputSystem::isKeyDown(KEYBOARD_KEY_F)) {
 		swapTruckOrientation();
