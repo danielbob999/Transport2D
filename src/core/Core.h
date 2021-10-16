@@ -10,6 +10,8 @@
 #include "../../includes/imgui/imgui.h"
 #include "../../includes/imgui/imgui_impl_glfw.h"
 #include "../../includes/imgui/imgui_impl_opengl3.h"
+#include "../../includes/imgui/imgui_impl_sdl.h"
+#include "../../includes/imgui/imgui_impl_sdlrenderer.h"
 #include "audio/AudioManager.h"
 #include "physics/PhysicsSystem.h"
 #include "../game/controls/ControlsDisplay.h"

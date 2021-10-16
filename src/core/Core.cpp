@@ -26,34 +26,57 @@ void Core::glfwWindowResizeCallbackFn(GLFWwindow* window, int width, int height)
 
 /* Private functions */
 void Core::run() {
-    /* Initialize the library */
-    if (!glfwInit()) {
+    SDL_Window* window;
+    SDL_GLContext context;
+
+    // Initialize SDL Video
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        fprintf(stderr, "Failed to initialize SDL video\n");
         return;
     }
 
-    // Specify glfw window hints
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-    glfwWindowHint(GLFW_SAMPLES, 4);
-    glfwWindowHint(GLFW_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_VERSION_MINOR, 3);
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    /* Create a windowed mode window and its OpenGL context */
-    m_window = glfwCreateWindow(1152, 648, "Transport2D", NULL, NULL);
-
-    if (!m_window) {
-        glfwTerminate();
+    // Create main window
+    window = SDL_CreateWindow(
+        "SDL App",
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED,
+        1152, 648,
+        SDL_WINDOW_OPENGL);
+    if (window == NULL) {
+        fprintf(stderr, "Failed to create main window\n");
+        SDL_Quit();
         return;
     }
 
-    /* Make the window's context current */
-    glfwMakeContextCurrent(m_window);
+    // Initialize rendering context
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(
+        SDL_GL_CONTEXT_PROFILE_MASK,
+        SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    glfwSetKeyCallback(m_window, InputSystem::inputCallbackFn);
-    glfwSetWindowSizeCallback(m_window, glfwWindowResizeCallbackFn);
+    context = SDL_GL_CreateContext(window);
+    if (context == NULL) {
+        fprintf(stderr, "Failed to create GL context\n");
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return;
+    }
 
-    glewInit();
+    SDL_GL_SetSwapInterval(1); // Use VSYNC
+
+    // Initialize GL Extension Wrangler (GLEW)
+    GLenum err;
+    glewExperimental = GL_TRUE; // Please expose OpenGL 3.x+ interfaces
+    err = glewInit();
+    if (err != GLEW_OK) {
+        fprintf(stderr, "Failed to init GLEW\n");
+        SDL_GL_DeleteContext(context);
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return;
+    }
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -62,40 +85,19 @@ void Core::run() {
 
     ImGui::StyleColorsLight();
 
-    ImGui_ImplGlfw_InitForOpenGL(m_window, true);
+    //ImGui_ImplGlfw_InitForOpenGL(m_window, true);
+    ImGui_ImplSDL2_InitForOpenGL(window, context);
     ImGui_ImplOpenGL3_Init("#version 130");
 
-    // start sdl
-    //The window we'll be rendering to
-    SDL_Window* window = NULL;
-
-    //The surface contained by the window
-    SDL_Surface* screenSurface = NULL;
-
-    //Initialize SDL
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
-        printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-    } else {
-        //Create window
-        window = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_SHOWN);
-        if (window == NULL)
-        {
-            printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-        }
-    }
-
-    // end sdl
-
-    /* 
+    /*
      ===================================
-      Call all the Core Systems start functions here 
+      Call all the Core Systems start functions here
      ===================================
     */
     m_inputSystem->start();
     m_physicsSystem->start();
     m_renderSystem->start();
-	m_audioManager->start();
+    m_audioManager->start();
     m_controlsDisplay->start();
 
     // Call the init function provided. This is where Objects/ComponentScripts should be created.
@@ -104,13 +106,23 @@ void Core::run() {
     // Call the start function provided in main
     callObjectLoop(0);
 
-    /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(m_window) && m_shouldBeLooping) {
+    bool quit = false;
+    SDL_Event e;
+
+    while (!quit) {
+        //Handle events on queue
+        while (SDL_PollEvent(&e) != 0) {
+            //User requests quit
+            if (e.type == SDL_QUIT) {
+                quit = true;
+            }
+        }
+
         double frameStartTime = glfwGetTime();
 
         // Start a new GUI frame here. ImGui cal be called from all update functions
         ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
+        ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
         // Call the update function of all ComponentScripts connected to Objects
@@ -123,23 +135,22 @@ void Core::run() {
         */
         m_renderSystem->update(m_lastFrameDelta);
         m_physicsSystem->update(m_lastFrameDelta);
-		m_audioManager->update(m_lastFrameDelta);
+        m_audioManager->update(m_lastFrameDelta);
         m_inputSystem->update(m_lastFrameDelta); // This must come after every other update
         m_controlsDisplay->update(m_lastFrameDelta);
         m_console->update();
-
-        /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
 
         // Render background colour
         float* backgroundColour = Camera::getInstance()->getBackgroundColour();
         glClearColor(backgroundColour[0], backgroundColour[1], backgroundColour[2], 1.0f);
 
+        glClear(GL_COLOR_BUFFER_BIT);
+
         /*
-         ===================================
-          Call all the Core Systems render functions here
-         ===================================
-        */
+        ===================================
+         Call all the Core Systems render functions here
+        ===================================
+       */
         m_inputSystem->render(m_lastFrameDelta);
         m_renderSystem->render(m_lastFrameDelta);
         m_physicsSystem->render(m_lastFrameDelta);
@@ -147,31 +158,8 @@ void Core::run() {
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        /* Swap front and back buffers */
-        glfwSwapBuffers(m_window);
-
-        /* Poll for and process events */
-        glfwPollEvents();
-
-        m_lastFrameDelta = (glfwGetTime() - m_runTime) * 1000; // Get the time difference (in seconds) then convert to milliseconds (x 1000)
-        m_runTime = glfwGetTime();
-
-		if (m_limitTo60FPS) {
-			double totalFrameTimeInMs = (glfwGetTime() - frameStartTime) * 1000;
-			double sleepTime = (1000 / 60.0) - totalFrameTimeInMs;
-
-			// Reset the sleep back to zero if some calculation weirdness has happened
-			if (sleepTime < 0) {
-				sleepTime = 0;
-			}
-
-			Sleep(sleepTime);
-		}
+        SDL_GL_SwapWindow(window);
     }
-
-    // Call the close function of all ComponentScripts
-    // This must be done before all the important systems close down
-    callObjectLoop(2);
 
     /*
      ===================================
@@ -180,17 +168,25 @@ void Core::run() {
     */
     m_inputSystem->close();
     m_renderSystem->close();
-	m_audioManager->close();
+    m_audioManager->close();
     m_controlsDisplay->close();
     m_physicsSystem->close();
 
     ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
     ImGui::DestroyContext();
 
-    glfwDestroyWindow(m_window);
-    glfwTerminate();
+    //Destroy window
+    SDL_DestroyWindow(window);
 
+    //Quit SDL subsystems
+    SDL_Quit();
+
+    return;
+
+    // ------------------------------------------------------------------
+    // Old code below here
+    //--------------------------------------------------------------------
 }
 
 void Core::callObjectLoop(int code) {
