@@ -20,10 +20,6 @@ void Core::glfwErrorCallbackFn(int err, const char* msg) {
     getInstance()->m_shouldBeLooping = false;
 }
 
-void Core::glfwWindowResizeCallbackFn(GLFWwindow* window, int width, int height) {
-    Camera::getInstance()->setScreenSize(width, height);
-}
-
 /* Private functions */
 void Core::run() {
     // Initialize SDL Video
@@ -104,7 +100,7 @@ void Core::run() {
     SDL_Event e;
 
     while (!quit) {
-        double frameStartTime = glfwGetTime();
+        double frameStartTime;
 
         // Start a new GUI frame here. ImGui cal be called from all update functions
         ImGui_ImplOpenGL3_NewFrame();

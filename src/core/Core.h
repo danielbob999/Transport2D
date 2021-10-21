@@ -8,7 +8,6 @@
 #include "input/InputKeyDefs.h"
 #include "renderer/RenderSystem.h"
 #include "../../includes/imgui/imgui.h"
-#include "../../includes/imgui/imgui_impl_glfw.h"
 #include "../../includes/imgui/imgui_impl_opengl3.h"
 #include "../../includes/imgui/imgui_impl_sdl.h"
 #include "../../includes/imgui/imgui_impl_sdlrenderer.h"
@@ -26,7 +25,6 @@ private:
 
 	static Core* s_instance;
 	static void glfwErrorCallbackFn(int, const char*);
-	static void glfwWindowResizeCallbackFn(GLFWwindow*, int, int);
 	
 	bool m_shouldBeLooping;
 	SDL_Window* m_window;
