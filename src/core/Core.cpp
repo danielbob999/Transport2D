@@ -13,13 +13,6 @@ using namespace core_objectsystem;
 /* Static variables */
 Core* Core::s_instance = nullptr;
 
-/* Static functions */
-void Core::glfwErrorCallbackFn(int err, const char* msg) {
-    // Log the error and close the app
-    Console::logError("An GLFW error has occured (" + std::to_string(err) + "): " + std::string(msg));
-    getInstance()->m_shouldBeLooping = false;
-}
-
 /* Private functions */
 void Core::run() {
     // Initialize SDL Video
@@ -54,7 +47,7 @@ void Core::run() {
         return;
     }
 
-    SDL_GL_SetSwapInterval(1); // Use VSYNC
+    SDL_GL_SetSwapInterval(0); // Don't use VSYNC
 
     // Initialize GL Extension Wrangler (GLEW)
     GLenum err;
@@ -96,11 +89,10 @@ void Core::run() {
     // Call the start function provided in main
     callObjectLoop(0);
 
-    bool quit = false;
     SDL_Event e;
 
-    while (!quit) {
-        double frameStartTime;
+    while (m_shouldBeLooping) {
+        double frameStartTime = SDL_GetTicks() / 1000.0f;
 
         // Start a new GUI frame here. ImGui cal be called from all update functions
         ImGui_ImplOpenGL3_NewFrame();
@@ -146,12 +138,27 @@ void Core::run() {
         while (SDL_PollEvent(&e) != 0) {
             //User requests quit
             if (e.type == SDL_QUIT) {
-                quit = true;
+                m_shouldBeLooping = false;
             }
 
             if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
                 m_inputSystem->logKeyboardAction(e.key);
             }
+        }
+
+        m_lastFrameDelta = ((SDL_GetTicks() / 1000.0f) - m_runTime); // Get the time difference (in seconds) then convert to milliseconds (x 1000)
+        m_runTime = SDL_GetTicks() / 1000.0f;
+
+        if (m_limitTo60FPS) {
+            double totalFrameTimeInMs = ((SDL_GetTicks() / 1000.0f) - frameStartTime);
+            double sleepTime = (1000 / 60.0) - totalFrameTimeInMs;
+
+            // Reset the sleep back to zero if some calculation weirdness has happened
+            if (sleepTime < 0) {
+                sleepTime = 0;
+            }
+
+            Sleep(sleepTime);
         }
     }
 
@@ -205,7 +212,7 @@ Core::Core() {
 }
 
 double Core::getRunTime() {
-    return m_runTime;
+    return SDL_GetTicks() / 1000.0f;
 }
 
 double Core::getLastFrameDelta() {

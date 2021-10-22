@@ -24,7 +24,6 @@ private:
 	const static int VERSION_MINOR = 2;
 
 	static Core* s_instance;
-	static void glfwErrorCallbackFn(int, const char*);
 	
 	bool m_shouldBeLooping;
 	SDL_Window* m_window;
